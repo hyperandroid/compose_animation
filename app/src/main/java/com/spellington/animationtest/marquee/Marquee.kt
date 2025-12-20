@@ -1,4 +1,4 @@
-package com.spellington.animationtest
+package com.spellington.animationtest.marquee
 
 import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.LinearEasing
@@ -66,9 +66,7 @@ internal class MarqueeModifierNode(
         animationJob = null
     }
 
-    fun update(
-        duration: Int
-    ) {
+    fun update(duration: Int) {
         if (this.duration != duration) {
             this.duration = duration
             restartMarquee()
@@ -89,6 +87,9 @@ internal class MarqueeModifierNode(
             }) {
 
                 offset.snapTo(containerWidth.toFloat())
+
+                // animate forever. there is no need to add a finally since it will never be
+                // reached.
                 offset.animateTo(
                     -contentsWidth.toFloat(),
                     infiniteRepeatable(
@@ -98,11 +99,15 @@ internal class MarqueeModifierNode(
                         ),
                     )
                 )
-
             }
         }
     }
 
+    /**
+     * Start the animation during measure.
+     * The Animatable animates values knowing the size of the parent and the contents nodes.
+     *
+     */
     override fun MeasureScope.measure(
         measurable: Measurable,
         constraints: Constraints
@@ -143,6 +148,7 @@ internal class MarqueeModifierNode(
             // offset goes from containerWidth to -contentsWidth
             // which effectively makes the text slide right to left until
             // it completely disappears.
+            // This read also triggers redraws by snapshotting the Animatable value.
             translate(left = offset.value) {
                 this@draw.drawContent()
             }
