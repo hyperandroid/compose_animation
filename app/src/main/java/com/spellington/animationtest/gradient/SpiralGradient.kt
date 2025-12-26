@@ -1,4 +1,4 @@
-package com.spellington.animationtest.waves
+package com.spellington.animationtest.gradient
 
 import android.graphics.LinearGradient
 import android.graphics.RenderEffect
@@ -12,6 +12,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.composed
+import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.asComposeRenderEffect
 import androidx.compose.ui.graphics.graphicsLayer
@@ -29,9 +30,10 @@ private const val spiralGradient = """
     uniform shader content;   
     uniform float2 iResolution; 
     uniform float iTime;
-    uniform float iTimeScale;
-    uniform float iDirection;   // -1 out, 1 in.
+    uniform float iTimeScale;       // make if slower(smaller value) or faster.
+    uniform float iDirection;       // -1 out, 1 in.
     uniform float iSpiralThreshold; // bigger more spiral-ish
+    uniform float2 iCenter;          // 0.5f by default
     
     float remap(float v0, float v1, float r0, float r1, float v) {
         return r0 + (r1-r0)*(v-v0)/(v1-v0);
@@ -39,13 +41,20 @@ private const val spiralGradient = """
     
     float2 spiral(float2 uv, float spiral, float time) {
         float pi = 3.1415926;
-        uv = (2*uv) - 1.;
-        float aspect = min(iResolution.x/iResolution.y, iResolution.y/iResolution.x);
-        uv.y *= aspect;
+        uv = (2*uv - 1.) - (2*iCenter - 1);
+        
+        if (iResolution.x < iResolution.y) {
+            float aspect = iResolution.y/iResolution.x;
+            uv.y *= aspect;
+        } else {
+            float aspect = iResolution.x/iResolution.y;
+            uv.x *= aspect;
+        }
   
         float radius = length(uv);
         float angle = atan(uv.y, uv.x);
-        float t = remap(-pi, pi, 0, 1, angle);
+
+        float t = remap(-pi, pi, -1, 1, angle);
         
         t = (t + spiral*radius + time);
         
@@ -55,6 +64,7 @@ private const val spiralGradient = """
     half4 main(float2 fragCoord) {	    
         half4 contentColor = content.eval(fragCoord);
         float2 uv = fragCoord / iResolution;
+        
         uv = spiral(uv, iSpiralThreshold, iTime*iDirection*iTimeScale);
         
         half4 color = gradient.eval(uv);
@@ -74,7 +84,7 @@ internal fun linearGradient(colors: GradientColors) = LinearGradient(
     0f, 0f, 1f, 0f,
     convertComposeColors(colors),
     null,
-    Shader.TileMode.REPEAT
+    Shader.TileMode.MIRROR
 )
 
 enum class SpiralGradientDirection {
@@ -87,6 +97,7 @@ fun Modifier.spiralGradient(
     spiralThreshold: Float = 5f,
     animate: Boolean = false,
     timeScale: Float = .1f,
+    center: Offset = Offset(.5f, .5f),
     wavy: Boolean = false,
 ): Modifier = composed {
     var timeMs by remember { mutableFloatStateOf(0f) }
@@ -135,6 +146,10 @@ fun Modifier.spiralGradient(
             runtimeShader.setFloatUniform(
                 "iTimeScale",
                 timeScale
+            )
+            runtimeShader.setFloatUniform(
+                "iCenter",
+                center.x, center.y
             )
         }
 }

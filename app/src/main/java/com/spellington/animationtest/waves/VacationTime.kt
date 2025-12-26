@@ -10,7 +10,6 @@ import android.graphics.SweepGradient
 import androidx.annotation.DrawableRes
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxScope
 import androidx.compose.foundation.layout.BoxWithConstraints
@@ -20,7 +19,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.safeContentPadding
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Lock
@@ -39,7 +37,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.geometry.Offset
@@ -51,7 +48,6 @@ import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.graphics.ShaderBrush
 import androidx.compose.ui.graphics.TileMode
 import androidx.compose.ui.graphics.asComposeRenderEffect
-import androidx.compose.ui.graphics.fromColorLong
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.layout.onSizeChanged
@@ -63,6 +59,9 @@ import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.spellington.animationtest.R
+import com.spellington.animationtest.gradient.GradientColors
+import com.spellington.animationtest.gradient.SpiralGradientDirection
+import com.spellington.animationtest.gradient.spiralGradient
 import kotlinx.coroutines.android.awaitFrame
 import kotlin.math.cos
 import kotlin.math.max
@@ -117,41 +116,6 @@ fun VacationTime(
                 }
             )
 
-            Box(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(100.dp)
-            ) {
-                Box(
-                    modifier = Modifier
-                        //.blur(16.dp)
-                        .fillMaxSize()
-                        .clip(shape = RectangleShape)
-                        .spiralGradient(
-                            animate = true,
-                            direction = SpiralGradientDirection.Out,
-                            spiralThreshold = 2f,
-                            timeScale = .1f,
-                            colors = GradientColors(
-                                listOf(
-                                    Color.Yellow,
-                                    Color.White,
-                                    Color.Cyan,
-                                    Color.Green,
-                                )
-                            )
-                        )
-                        .drawBehind {
-                            drawRect(Color.Red)
-                        },
-                )
-                Text(
-                    modifier = Modifier.align(Alignment.Center),
-                    text = "Vacation",
-                    fontSize = fontSize
-                )
-            }
-
             Canvas(
                 modifier = Modifier
                     //.blur(16.dp)
@@ -159,18 +123,18 @@ fun VacationTime(
                     .clip(shape = RectangleShape)
                     .height(100.dp)
                     .fillMaxWidth()
-                    .alpha(.5f)
                     .spiralGradient(
                         direction= SpiralGradientDirection.In,
-                        colors =GradientColors(
+                        animate = true,
+                        colors = GradientColors(
                             listOf(
-                                Color.fromColorLong(0x1fff00ff),
+                                Color(0xffff00ff),
                                 Color.Red,
                                 Color.Yellow,
                                 Color.White,
                                 Color.Cyan,
-                                Color.fromColorLong(0x1f00ff00),
-                            )
+
+                                )
                         )
                     ),
             ) {
@@ -183,14 +147,16 @@ fun VacationTime(
                     .padding(16.dp)
                     .clip(RoundedCornerShape(24.dp))
                     .height(80.dp),
-                colors = GradientColors(listOf(
-                    Color.Magenta,
-                    Color.Red,
-                    Color.Yellow,
-                    Color.White,
-                    Color.Cyan,
-                    Color.Green,
-                )),
+                colors = GradientColors(
+                    listOf(
+                        Color.Magenta,
+                        Color.Red,
+                        Color.Yellow,
+                        Color.White,
+                        Color.Cyan,
+                        Color.Green,
+                    )
+                ),
 
             )
 
@@ -200,14 +166,16 @@ fun VacationTime(
                     .clip(RoundedCornerShape(24.dp))
                     .height(100.dp) // Example size
                     .fillMaxWidth(),
-                colors = GradientColors(listOf(
-                    Color.Magenta,
-                    Color.Red,
-                    Color.Yellow,
-                    Color.White,
-                    Color.Cyan,
-                    Color.Green,
-                ))
+                colors = GradientColors(
+                    listOf(
+                        Color.Magenta,
+                        Color.Red,
+                        Color.Yellow,
+                        Color.White,
+                        Color.Cyan,
+                        Color.Green,
+                    )
+                )
             )
 
 
@@ -459,20 +427,17 @@ fun RotatingSweepGradient(
         }
     }
 
+    val shader = remember(center) {
+        SweepGradient(
+            center.x,
+            center.y,
+            colors.colors.map { it.toArgb() }.toIntArray(),
+            null,
+        )
+    }
+
     // Recreate the brush only when the angle or center changes.
     val brush = remember(angle, center) {
-        if (center == Offset.Zero) {
-            // Return a static brush if the center is not yet known
-            Brush.sweepGradient(colors.colors)
-        } else {
-            // Create a native Android shader
-            val shader = SweepGradient(
-                center.x,
-                center.y,
-                colors.colors.map { it.toArgb() }.toIntArray(),
-                null,
-            )
-
             // Create a matrix and apply rotation around the center
             val matrix = Matrix().apply {
                 postRotate(angle, center.x, center.y)
@@ -481,7 +446,6 @@ fun RotatingSweepGradient(
 
             // Wrap the native shader in a Compose ShaderBrush
             ShaderBrush(shader)
-        }
     }
 
     Canvas(
