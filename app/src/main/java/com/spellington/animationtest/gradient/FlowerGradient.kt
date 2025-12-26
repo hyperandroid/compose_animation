@@ -4,7 +4,6 @@ import android.graphics.LinearGradient
 import android.graphics.RenderEffect
 import android.graphics.RuntimeShader
 import android.graphics.Shader
-import androidx.compose.runtime.Immutable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableFloatStateOf
@@ -20,29 +19,24 @@ import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.layout.onSizeChanged
 import kotlinx.coroutines.android.awaitFrame
 
-@Immutable
-@JvmInline
-value class GradientColors(val colors: List<Color>)
-
-private const val spiralGradient = """
+private const val flowerGradient = """
     
     uniform shader gradient;   
     uniform shader content;   
     uniform float2 iResolution; 
     uniform float iTime;
-    uniform float iTimeScale;       // make if slower(smaller value) or faster.
-    uniform float iDirection;       // -1 out, 1 in.
-    uniform float iSpiralThreshold; // bigger more spiral-ish
-    uniform float iAlphaThreshold;  // transparency threshold
-    uniform float2 iCenter;         // 0.5f by default
+    uniform float iRotationTimeScale;   // make if slower(smaller value) or faster.
+    uniform float iInOutTimeScale;   // make if slower(smaller value) or faster.
+    uniform float flowerPetals;         // bigger more spiral-ish
+    uniform float iAlphaThreshold;      // transparency threshold
+    uniform float2 iCenter;             // 0.5f by default
+    uniform float iPetalInfluence;
+    uniform float iRotationDirection;   // 1 clockwise, -1 counterclockwise
+    uniform float iDirection;           // in/out
+    uniform float iWobblyFactor;
     
-    float remap(float v0, float v1, float r0, float r1, float v) {
-        return r0 + (r1-r0)*(v-v0)/(v1-v0);
-    }
-    
-    float2 spiral(float2 uv, float spiral, float time) {
-        float pi = 3.1415926;
-        uv = (2*uv - 1.) - (2*iCenter - 1);
+    float2 flower(float2 uv, float spiral, float rotationTime, float inOutTime) {
+        uv = 2*(uv-iCenter);
         
         if (iResolution.x < iResolution.y) {
             float aspect = iResolution.y/iResolution.x;
@@ -52,12 +46,12 @@ private const val spiralGradient = """
             uv.x *= aspect;
         }
   
+        float pi = 3.1415926;
         float radius = length(uv);
-        float angle = atan(uv.y, uv.x);
-
-        float t = remap(-pi, pi, -1, 1, angle);
+        float angle = atan(uv.y, uv.x) + rotationTime * iRotationDirection + iWobblyFactor*sin(pi*radius+rotationTime); 
         
-        t = (t + spiral*radius + time);
+
+        float t = radius + iPetalInfluence * sin((angle + pi)*spiral) + inOutTime;
         
         return float2(t, 0);
     }
@@ -66,7 +60,12 @@ private const val spiralGradient = """
         half4 contentColor = content.eval(fragCoord);
         float2 uv = fragCoord / iResolution;
         
-        uv = spiral(uv, iSpiralThreshold, iTime*iDirection*iTimeScale);
+        uv = flower(
+            uv, 
+            flowerPetals, 
+            iTime*iRotationTimeScale*iRotationDirection,
+            iTime*iInOutTimeScale*iDirection
+        );
         
         half4 color = gradient.eval(uv);
         if (contentColor.a < iAlphaThreshold) {
@@ -77,21 +76,25 @@ private const val spiralGradient = """
     }
 """
 
-enum class SpiralGradientDirection {
-    In, Out,
+enum class RotationDirection {
+    Clockwise, CounterClockwise,
 }
 
-fun Modifier.spiralGradient(
+fun Modifier.flowerGradient(
     colors: GradientColors = GradientColors(listOf(Color.Red, Color.Blue)),
-    direction: SpiralGradientDirection = SpiralGradientDirection.Out,
-    spiralThreshold: Float = 5f,
+    flowerPetals: Float = 5f,
     animate: Boolean = false,
-    timeScale: Float = .1f,
+    rotationTimeScale: Float = .1f,
+    inOutTimeScale: Float = .1f,
     center: Offset = Offset(.5f, .5f),
     alphaThreshold: Float = .02f,
+    petalInfluence: Float = 1f,
+    wobblyFactor: Float = 0f,
+    direction: SpiralGradientDirection = SpiralGradientDirection.Out,
+    rotationDirection: RotationDirection = RotationDirection.Clockwise,
 ): Modifier = composed {
     var timeMs by remember { mutableFloatStateOf(0f) }
-    val runtimeShader = remember { RuntimeShader(spiralGradient) }
+    val runtimeShader = remember { RuntimeShader(flowerGradient) }
 
     if (animate) {
         // Animate the time uniform on every frame.
@@ -137,16 +140,16 @@ fun Modifier.spiralGradient(
                 .asComposeRenderEffect()
 
             runtimeShader.setFloatUniform(
-                "iDirection",
-                if (direction == SpiralGradientDirection.Out) -1f else 1f
+                "flowerPetals",
+                flowerPetals
             )
             runtimeShader.setFloatUniform(
-                "iSpiralThreshold",
-                spiralThreshold
+                "iRotationTimeScale",
+                rotationTimeScale
             )
             runtimeShader.setFloatUniform(
-                "iTimeScale",
-                timeScale
+                "iInOutTimeScale",
+                inOutTimeScale
             )
             runtimeShader.setFloatUniform(
                 "iCenter",
@@ -155,6 +158,22 @@ fun Modifier.spiralGradient(
             runtimeShader.setFloatUniform(
                 "iAlphaThreshold",
                 alphaThreshold,
+            )
+            runtimeShader.setFloatUniform(
+                "iPetalInfluence",
+                petalInfluence,
+            )
+            runtimeShader.setFloatUniform(
+                "iDirection",
+                if (direction == SpiralGradientDirection.Out) -1f else 1f
+            )
+            runtimeShader.setFloatUniform(
+                "iRotationDirection",
+                if (rotationDirection == RotationDirection.Clockwise) -1f else 1f
+            )
+            runtimeShader.setFloatUniform(
+                "iWobblyFactor",
+                wobblyFactor
             )
         }
 }

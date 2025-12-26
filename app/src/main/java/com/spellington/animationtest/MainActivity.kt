@@ -22,19 +22,22 @@ import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.rememberDrawerState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.spellington.animationtest.gradient.CheshireCat
+import com.spellington.animationtest.gradient.Flower
+import com.spellington.animationtest.gradient.palettes
 import com.spellington.animationtest.ui.theme.AnimationtestTheme
 import com.spellington.animationtest.waves.VacationTime
 import kotlinx.coroutines.launch
 
 enum class AnimationDemos {
     Marquee,
-    SpiralGradientCat,
+    SpiralGradient,
+    FlowerGradient,
     Vacation,
 }
 
@@ -48,8 +51,8 @@ class MainActivity : ComponentActivity() {
 
                 val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
                 val scope = rememberCoroutineScope()
-                var selectedAnimation by remember {
-                    mutableStateOf(AnimationDemos.SpiralGradientCat)
+                var selectedAnimation by rememberSaveable {
+                    mutableStateOf(AnimationDemos.SpiralGradient)
                 }
 
                 ModalNavigationDrawer(
@@ -59,10 +62,20 @@ class MainActivity : ComponentActivity() {
                         ModalDrawerSheet {
                             Text("Drawer Title", modifier = Modifier.padding(16.dp))
                             NavigationDrawerItem(
-                                label = { Text("Cheshire cat") },
+                                label = { Text("Spiral Gradient") },
                                 selected = false,
                                 onClick = {
-                                    selectedAnimation = AnimationDemos.SpiralGradientCat
+                                    selectedAnimation = AnimationDemos.SpiralGradient
+                                    scope.launch {
+                                        drawerState.close()
+                                    }
+                                }
+                            )
+                            NavigationDrawerItem(
+                                label = { Text("Flower Gradient") },
+                                selected = false,
+                                onClick = {
+                                    selectedAnimation = AnimationDemos.FlowerGradient
                                     scope.launch {
                                         drawerState.close()
                                     }
@@ -110,9 +123,15 @@ class MainActivity : ComponentActivity() {
                         Box(modifier = Modifier.padding(innerPadding)) {
                             when (selectedAnimation) {
                                 AnimationDemos.Marquee -> {}
-                                AnimationDemos.SpiralGradientCat -> CheshireCat(
+                                AnimationDemos.SpiralGradient -> CheshireCat(
                                     spiralThreshold = 4f,
                                     timeScale = .5f,
+                                )
+                                AnimationDemos.FlowerGradient -> Flower(
+                                    petals = 7f,
+                                    rotationTimeScale = .1f,
+                                    petalInfluence = .35f,
+                                    colors = palettes[1],
                                 )
                                 AnimationDemos.Vacation -> VacationTime()
                             }

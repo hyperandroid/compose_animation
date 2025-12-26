@@ -38,7 +38,6 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
@@ -61,7 +60,7 @@ import androidx.compose.ui.unit.sp
 import com.spellington.animationtest.R
 import com.spellington.animationtest.gradient.GradientColors
 import com.spellington.animationtest.gradient.SpiralGradientDirection
-import com.spellington.animationtest.gradient.spiralGradient
+import com.spellington.animationtest.gradient.flowerGradient
 import kotlinx.coroutines.android.awaitFrame
 import kotlin.math.cos
 import kotlin.math.max
@@ -123,8 +122,7 @@ fun VacationTime(
                     .clip(shape = RectangleShape)
                     .height(100.dp)
                     .fillMaxWidth()
-                    .spiralGradient(
-                        direction= SpiralGradientDirection.In,
+                    .flowerGradient(
                         animate = true,
                         colors = GradientColors(
                             listOf(
@@ -135,7 +133,8 @@ fun VacationTime(
                                 Color.Cyan,
 
                                 )
-                        )
+                        ),
+                        flowerPetals = 5f,
                     ),
             ) {
                 drawRect(Color.Blue)
