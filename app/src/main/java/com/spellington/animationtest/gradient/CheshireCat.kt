@@ -7,11 +7,6 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.size
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableIntStateOf
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.drawBehind
@@ -28,6 +23,7 @@ val palettes = arrayOf(
     // cheshire cat
     listOf(
         Color(0xff98117f),
+
         Color(0xff520759),
     ),
     // candy bar
@@ -73,46 +69,71 @@ val palettes = arrayOf(
         Color(0xff436400), // Forest Green
         Color(0xff1e2d00)  // Deep Forest Green
     ),
+)
 
+data class CheshireCatEffect(
+    val timeScale: Float = .5f,
+    val spiralThreshold: Float = 2f,
+    val direction: SpiralGradientDirection = SpiralGradientDirection.Out,
+    val center: Offset = Offset(.5f, .5f),
+    val alphaThreshold: Float = .02f,
+    val colors: List<Color> = palettes[0],
+)
+
+val ChesireCatEffects = listOf(
+    CheshireCatEffect(
+        spiralThreshold = 4f,
+    ),
+    CheshireCatEffect(
+        timeScale = .1f,
+        spiralThreshold = 1f,
+        colors = palettes[1],
+        direction = SpiralGradientDirection.In,
+    ),
+    CheshireCatEffect(
+        center = Offset(.25f, .25f),
+        spiralThreshold = 4f,
+        colors = palettes[5],
+    ),
+    CheshireCatEffect(
+        timeScale = .1f,
+        spiralThreshold = 2f,
+        colors = palettes[4],
+        center = Offset(.75f, .75f),
+        direction = SpiralGradientDirection.In,
+    ),
 )
 
 @Composable
 fun CheshireCat(
     modifier: Modifier = Modifier,
     @DrawableRes drawable:  Int = R.drawable.cheshire_cat,
+    animate: Boolean = true,
     timeScale: Float = .5f,
     spiralThreshold: Float = 2f,
     direction: SpiralGradientDirection = SpiralGradientDirection.In,
     colors: List<Color> = palettes[0],
     center: Offset = Offset(.5f, .5f),
     alphaThreshold: Float = .02f,
+    onClick: () -> Unit = {},
 ) {
-
-    var paletteIndex by remember {
-        mutableIntStateOf(0)
-    }
-
-    var paletteColors by remember {
-        mutableStateOf(colors)
-    }
 
     Box(
         modifier = modifier
             .fillMaxSize()
             .clickable {
-                paletteIndex += 1
-                paletteColors = palettes[paletteIndex%palettes.size]
+                onClick()
             }
     ) {
         Box(
             modifier = Modifier
                 .fillMaxSize()
                 .spiralGradient(
-                    animate = true,
+                    animate = animate,
                     direction = direction,
                     spiralThreshold = spiralThreshold,
                     timeScale = timeScale,
-                    colors = GradientColors(paletteColors),
+                    colors = GradientColors(colors),
                     center = center,
                     alphaThreshold = alphaThreshold,
                 )
