@@ -77,12 +77,22 @@ class HatchGradientShader() {
             shader.setFloatUniform("iDirection", _direction.toFloat())
         }
 
+    private var _angle: Float = 0f
+    var angle: Float
+        get() = _angle
+        set(value) {
+            if (_angle == value) return
+            _angle = value
+            shader.setFloatUniform("iAngle", _angle)
+        }
+
     init {
         shader.setFloatUniform("iTime", 0f)
         shader.setFloatUniform("iTimeScale", timeScale)
         shader.setFloatUniform("iAmplitude", amplitude)
         shader.setFloatUniform("iDirection", direction.toFloat())
         shader.setFloatUniform("iPeaks", peaks)
+        shader.setFloatUniform("iAngle", angle)
     }
 
 
@@ -96,6 +106,7 @@ class HatchGradientShader() {
             uniform float iTimeScale;       // make it slower(smaller value) or faster.
             uniform float iAmplitude;
             uniform float iPeaks;
+            uniform float iAngle;
         
             float2 hatchy(float2 uv, float stripes, float factor) {
                 float displacement = stripes * uv.y + iTime;
@@ -126,7 +137,24 @@ class HatchGradientShader() {
         
             half4 main(float2 fragCoord) {
                 float2 uv = fragCoord.xy/iResolution.xy;
-                
+
+                // Correct for aspect ratio to make the spiral circular.
+                if (iResolution.x < iResolution.y) {
+                    float aspect = iResolution.y / iResolution.x;
+                    uv.y *= aspect;
+                } else {
+                    float aspect = iResolution.x / iResolution.y;
+                    uv.x *= aspect;
+                }
+                                
+                float a = iAngle;
+                float c = cos(a);
+                float s = sin(a);
+                mat2 mat = mat2(c,-s,s,c);
+                uv -= .5;
+                uv = mat * uv;
+                uv += .5;
+                                                
                 if (iDirection > 0)
                     uv = hatchy(uv, iPeaks, iAmplitude);
                 else 
@@ -146,6 +174,7 @@ class HatchGradientBrush(
     timeScale: Float = .1f,
     amplitude: Float = 1f,
     peaks: Float = 4f,
+    angle: Float = 0f,
 ) : ShaderBrush() {
 
     private val shader = HatchGradientShader()
@@ -157,6 +186,7 @@ class HatchGradientBrush(
         setAmplitude(amplitude)
         setTime(time)
         setPeaks(peaks)
+        setAngle(angle)
     }
 
     override fun createShader(size: Size): Shader {
@@ -184,5 +214,9 @@ class HatchGradientBrush(
 
     fun setPeaks(peaks: Float) {
         shader.peaks = peaks
+    }
+
+    fun setAngle(angle: Float) {
+        shader.angle = angle
     }
 }

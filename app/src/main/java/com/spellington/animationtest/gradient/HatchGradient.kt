@@ -42,6 +42,7 @@ data class HatchGradientEffect(
     val direction: GradientSamplerOrientation = GradientSamplerOrientation.Horizontal,
     val amplitude: Float = .1f,
     val peaks: Float = 4f,
+    val angle: Float = 0f,
 
     val colors: List<Color> = samplePalettes[0],
     val tileMode: Shader.TileMode = Shader.TileMode.MIRROR,
@@ -56,6 +57,7 @@ val HatchGradientEffects = listOf(
         peaks = 8f,
         tileMode = Shader.TileMode.MIRROR,
         direction = GradientSamplerOrientation.Vertical,
+        angle = Math.PI.toFloat() * .25f,
     ),
     HatchGradientEffect(
         colors= samplePalettes[1],
@@ -75,6 +77,7 @@ fun HatchGradient(
     timeScale: Float = .2f,
     amplitude: Float = .1f,
     peaks: Float = 4f,
+    angle: Float = 0f,
 
     hardSampler: Boolean = false,
     bounds: GradientDomain = 0f to 1f,
@@ -103,8 +106,15 @@ fun HatchGradient(
                 timeScale = timeScale,
                 amplitude = amplitude,
                 peaks = peaks,
+                angle = angle,
             )
         )
+    }
+
+    brush.run {
+        setSampler(sampler)
+        setTimeScale(timeScale)
+        setAngle(angle)
     }
 
     PausableAnimatedTime(isPaused = !animate) { time ->
@@ -121,11 +131,7 @@ fun HatchGradient(
                     .drawWithCache {
 
                         onDrawBehind {
-                            brush.run {
-                                setSampler(sampler)
-                                setTimeScale(timeScale)
-                                setTime(time)
-                            }
+                            brush.setTime(time)
                             drawRect(brush)
                         }
                     }
@@ -185,6 +191,7 @@ fun PreviewHatchGradients() {
                     direction = currentEffect.direction,
                     amplitude = currentEffect.amplitude,
                     peaks = currentEffect.peaks * 2,
+                    angle = currentEffect.angle,
 
                     hardSampler = currentEffect.hardSampler,
                     bounds = currentEffect.bounds,

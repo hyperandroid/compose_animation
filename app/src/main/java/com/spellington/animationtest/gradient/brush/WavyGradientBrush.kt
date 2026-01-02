@@ -69,6 +69,15 @@ class WavyGradientShader() {
             shader.setFloatUniform("iPeriod", _period)
         }
 
+    private var _angle: Float = 0f
+    var angle: Float
+        get() = _angle
+        set(value) {
+            if (_angle == value) return
+            _angle = value
+            shader.setFloatUniform("iAngle", _angle)
+        }
+
     private var _sampler: Shader? = null
     var sampler: Shader?
         get() = _sampler
@@ -84,6 +93,7 @@ class WavyGradientShader() {
         shader.setFloatUniform("iTimeScale", timeScale)
         shader.setFloatUniform("iAmplitude", amplitude)
         shader.setFloatUniform("iPeriod", period)
+        shader.setFloatUniform("iAngle", angle)
     }
 
     companion object {
@@ -96,6 +106,7 @@ class WavyGradientShader() {
             uniform float iTimeScale;       // make it slower(smaller value) or faster.
             uniform float iAmplitude;
             uniform float iPeriod;
+            uniform float iAngle;
         
             float2 horizontalWaves(float2 uv, float amplitude, float period, float time) {
                 uv.x += amplitude * sin(uv.y * period + time) ;   // horizontal waves
@@ -109,6 +120,24 @@ class WavyGradientShader() {
             
             half4 main(float2 fragCoord) {
                 float2 uv = fragCoord.xy/iResolution.xy;
+                
+                // Correct for aspect ratio to make the spiral circular.
+                if (iResolution.x < iResolution.y) {
+                    float aspect = iResolution.y / iResolution.x;
+                    uv.y *= aspect;
+                } else {
+                    float aspect = iResolution.x / iResolution.y;
+                    uv.x *= aspect;
+                }
+                
+                float a = iAngle;
+                float c = cos(a);
+                float s = sin(a);
+                mat2 mat = mat2(c,-s,s,c);
+                uv -= .5;
+                uv = mat * uv;
+                uv += .5;
+                
                 
                 if (iDirection > 0) {
                     uv = horizontalWaves(uv, iAmplitude, iPeriod, iTime * iTimeScale);
@@ -130,6 +159,7 @@ class WavyGradientBrush(
     time: Float = 0f,
     timeScale: Float = .1f,
     amplitude: Float = .1f,
+    angle: Float = 0f,
     period: Float = 2f,
 ) : ShaderBrush() {
 
@@ -142,6 +172,7 @@ class WavyGradientBrush(
         setAmplitude(amplitude)
         setPeriod(period)
         setTime(time)
+        setAngle(angle)
     }
 
     override fun createShader(size: Size): Shader {
@@ -165,6 +196,10 @@ class WavyGradientBrush(
     fun setSampler(sampler: GradientSampler) {
         shader.sampler = sampler.sampler
         shader.direction = sampler.orientation
+    }
+
+    fun setAngle(angle: Float) {
+        shader.angle = angle
     }
 
     fun setTimeScale(timeScale: Float) {

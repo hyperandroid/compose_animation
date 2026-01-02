@@ -219,6 +219,7 @@ fun ShowHatchGradients(modifier: Modifier = Modifier) {
             timeScale = currentEffect.timeScale,
             amplitude = currentEffect.amplitude,
             peaks = currentEffect.peaks,
+            angle = currentEffect.angle,
 
             bounds = currentEffect . bounds,
             hardSampler = currentEffect.hardSampler,
@@ -252,6 +253,7 @@ fun ShowWavyGradients(modifier: Modifier = Modifier) {
             timeScale = currentEffect.timeScale,
             amplitude = currentEffect.amplitude,
             period = currentEffect.period,
+            angle = currentEffect.angle,
 
             bounds = currentEffect.bounds,
             hardSampler = currentEffect.hardSampler,
