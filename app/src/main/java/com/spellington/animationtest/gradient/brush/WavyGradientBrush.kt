@@ -121,23 +121,19 @@ class WavyGradientShader() {
             half4 main(float2 fragCoord) {
                 float2 uv = fragCoord.xy/iResolution.xy;
                 
-                // Correct for aspect ratio to make the spiral circular.
-                if (iResolution.x < iResolution.y) {
-                    float aspect = iResolution.y / iResolution.x;
-                    uv.y *= aspect;
-                } else {
-                    float aspect = iResolution.x / iResolution.y;
-                    uv.x *= aspect;
-                }
+                // Correct aspect ratio
+                float aspect;
+
+                aspect = iResolution.x / iResolution.y;
+                uv.x *= aspect;
                 
                 float a = iAngle;
                 float c = cos(a);
                 float s = sin(a);
                 mat2 mat = mat2(c,-s,s,c);
-                uv -= .5;
+                uv -= float2(aspect*.5, .5);
                 uv = mat * uv;
-                uv += .5;
-                
+                uv += float2(aspect*.5, .5);
                 
                 if (iDirection > 0) {
                     uv = horizontalWaves(uv, iAmplitude, iPeriod, iTime * iTimeScale);

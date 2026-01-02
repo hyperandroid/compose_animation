@@ -10,11 +10,9 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -27,11 +25,8 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.imageResource
-import androidx.compose.ui.text.TextStyle
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import com.spellington.animationtest.R
 import com.spellington.animationtest.gradient.brush.GradientColors
 import com.spellington.animationtest.gradient.brush.SpiralGradientBrush
@@ -81,7 +76,7 @@ val ChesireCatEffects = listOf(
 )
 
 @Composable
-fun CheshireCat(
+fun SpiralGradient(
     modifier: Modifier = Modifier,
     @DrawableRes drawable:  Int = R.drawable.cheshire_cat,
     animate: Boolean = true,
@@ -169,14 +164,14 @@ fun CheshireCat(
 
 @Preview
 @Composable
-fun PreviewCheshireCat() {
+fun PreviewSpiralGradient() {
     Column(modifier = Modifier
         .fillMaxSize()
         .verticalScroll(rememberScrollState()), // Make it scrollable
         verticalArrangement = Arrangement.spacedBy(16.dp)
     ) {
         ChesireCatEffects.forEach { currentEffect ->
-            CheshireCat(
+            SpiralGradient(
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(200.dp)

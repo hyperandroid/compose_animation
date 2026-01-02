@@ -52,6 +52,14 @@ data class HatchGradientEffect(
 
 val HatchGradientEffects = listOf(
     HatchGradientEffect(
+        colors= samplePalettes[1],
+        amplitude = .5f,
+        peaks = 5f,
+        tileMode = Shader.TileMode.REPEAT,
+        direction = GradientSamplerOrientation.Horizontal,
+        hardSampler = true,
+    ),
+    HatchGradientEffect(
         colors= samplePalettes[2],
         amplitude = .3f,
         peaks = 3f,
@@ -62,13 +70,24 @@ val HatchGradientEffects = listOf(
         hardSampler = true,
     ),
     HatchGradientEffect(
-        colors= samplePalettes[1],
-        amplitude = .5f,
-        peaks = 5f,
-        tileMode = Shader.TileMode.REPEAT,
-        direction = GradientSamplerOrientation.Horizontal,
-        hardSampler = true,
+        colors= samplePalettes[4],
+        direction = GradientSamplerOrientation.Vertical,
+        amplitude = 1f,
+        tileMode = Shader.TileMode.MIRROR,
+        angle =-(Math.PI * .1).toFloat(),
     ),
+    HatchGradientEffect(
+        colors= samplePalettes[3],
+        direction = GradientSamplerOrientation.Vertical,
+        amplitude = .2f,
+        bounds = .25f to .75f,
+        tileMode = Shader.TileMode.CLAMP,
+        hardSampler = true,
+        angle = (Math.PI * .1).toFloat(),
+        timeScale = -.3f,
+        peaks = 8f,
+    ),
+
 )
 
 @Composable

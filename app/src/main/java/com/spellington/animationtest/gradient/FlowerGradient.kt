@@ -1,6 +1,5 @@
 package com.spellington.animationtest.gradient
 
-import android.R
 import android.graphics.Shader
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -48,6 +47,12 @@ data class FlowerEffect(
 
 val FlowerEffects = listOf(
     FlowerEffect(
+        colors = samplePalettes[2],
+        rotationDirection = RotationDirection.Clockwise,
+        inOutTimeScale = .1f,
+        rotationTimeScale = .3f,
+    ),
+    FlowerEffect(
         petals = 13f,
         rotationTimeScale = .1f,
         petalInfluence = .35f,
@@ -55,12 +60,6 @@ val FlowerEffects = listOf(
         wobblyFactor = .3f,
         inOutTimeScale = .5f,
         hardSampler = true,
-    ),
-    FlowerEffect(
-        colors = samplePalettes[2],
-        rotationDirection = RotationDirection.Clockwise,
-        inOutTimeScale = .1f,
-        rotationTimeScale = .3f,
     ),
     FlowerEffect(
         petals = 7f,
@@ -85,13 +84,13 @@ val FlowerEffects = listOf(
         wobblyFactor = .0f,
         inOutTimeScale = .5f,
         center = Offset(.5f, .5f),
-        tileMode = Shader.TileMode.REPEAT,
+        tileMode = Shader.TileMode.MIRROR,
         hardSampler = true,
     ),
 )
 
 @Composable
-fun Flower(
+fun FlowerGradient(
     modifier: Modifier = Modifier,
     animate: Boolean = true,
     rotationTimeScale: Float = .5f,
@@ -168,7 +167,7 @@ fun Flower(
 
 @Preview
 @Composable
-fun PreviewFlowerGradient() {
+fun PreviewFlowerGradientGradient() {
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -176,7 +175,7 @@ fun PreviewFlowerGradient() {
         verticalArrangement = Arrangement.spacedBy(4.dp)
     ) {
         FlowerEffects.forEach { currentEffect ->
-            Flower(
+            FlowerGradient(
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(200.dp)
