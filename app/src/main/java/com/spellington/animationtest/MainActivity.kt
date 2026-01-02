@@ -203,11 +203,14 @@ fun ShowWavyGradients(modifier: Modifier = Modifier) {
             animate = true,
             direction = currentEffect.direction,
             timeScale = currentEffect.timeScale,
-            colors = currentEffect.colors,
             amplitude = currentEffect.amplitude,
             period = currentEffect.period,
-            tileMode = currentEffect.tileMode,
+
             bounds = currentEffect.bounds,
+            hardSampler = currentEffect.hardSampler,
+            tileMode = currentEffect.tileMode,
+            colors = currentEffect.colors,
+
             onClick = {
                 effectIndex += 1
             }
