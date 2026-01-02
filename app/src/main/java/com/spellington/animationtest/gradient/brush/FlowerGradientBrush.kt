@@ -207,14 +207,15 @@ class FlowerGradientBrush(
 
     init {
         shader.apply {
-            this.petals = flowerPetals
-            this.rotationTimeScale = rotationTimeScale
-            this.inOutTimeScale = inOutTimeScale
-            this.center = center
-            this.petalInfluence = petalInfluence
-            this.wobblyFactor = wobblyFactor
-            this.direction = direction
-            this.rotationDirection = rotationDirection
+            setSampler(sampler)
+            setPetals(flowerPetals)
+            setRotationTimeScale(rotationTimeScale)
+            setInOutTimeScale(inOutTimeScale)
+            setCenter(center)
+            setPetalInfluence(petalInfluence)
+            setWobblyFactor(wobblyFactor)
+            setDirection(direction)
+            setRotationDirection(rotationDirection)
         }
     }
 
@@ -262,19 +263,5 @@ class FlowerGradientBrush(
 
     fun setWobblyFactor(wobblyFactor: Float) {
         shader.wobblyFactor = wobblyFactor
-    }
-
-    companion object {
-
-        fun createSampler(
-            colors: GradientColors,
-            tileMode: Shader.TileMode,
-        ) = LinearGradient(
-            0f, 0f, 1f, 0f,
-            colors.colors.map
-            { it.toArgb() }.toIntArray(),
-            null,
-            tileMode,
-        )
     }
 }

@@ -207,6 +207,7 @@ fun ShowWavyGradients(modifier: Modifier = Modifier) {
             amplitude = currentEffect.amplitude,
             period = currentEffect.period,
             tileMode = currentEffect.tileMode,
+            bounds = currentEffect.bounds,
             onClick = {
                 effectIndex += 1
             }
@@ -261,6 +262,8 @@ fun ShowFlowerGradient(modifier: Modifier = Modifier) {
             petalInfluence = currentEffect.petalInfluence,
             wobblyFactor = currentEffect.wobblyFactor,
             colors = currentEffect.colors,
+            tileMode = currentEffect.tileMode,
+            hardSampler = currentEffect.hardSampler,
             onClick = {
                 effectIndex += 1
             }
@@ -299,12 +302,15 @@ fun ShowCheshireCat(
     val currentEffect = ChesireCatEffects[effectIndex % ChesireCatEffects.size]
 
     CheshireCat(
-        modifier = Modifier.fillMaxSize(),
+        modifier = modifier.fillMaxSize(),
         drawable = drawable,
         timeScale = currentEffect.timeScale,
         spiralThreshold = currentEffect.spiralThreshold,
         direction = currentEffect.direction,
+
+        hardSampler = currentEffect.hardSampler,
         colors = currentEffect.colors,
+        tileMode = currentEffect.tileMode,
         center = currentEffect.center,
         onClick = {
             effectIndex += 1
@@ -338,6 +344,8 @@ fun PreviewFlowerGradient() {
                 petalInfluence = currentEffect.petalInfluence,
                 wobblyFactor = currentEffect.wobblyFactor,
                 colors = currentEffect.colors,
+                hardSampler = currentEffect.hardSampler,
+                tileMode = currentEffect.tileMode,
             )
         }
     }

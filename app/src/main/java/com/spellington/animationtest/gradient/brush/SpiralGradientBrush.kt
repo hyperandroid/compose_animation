@@ -1,6 +1,5 @@
 package com.spellington.animationtest.gradient.brush
 
-import android.graphics.LinearGradient
 import android.graphics.RuntimeShader
 import android.graphics.Shader
 import androidx.compose.runtime.Immutable
@@ -8,7 +7,6 @@ import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ShaderBrush
-import androidx.compose.ui.graphics.toArgb
 
 @Immutable
 @JvmInline
@@ -154,13 +152,11 @@ class SpiralShader() {
  * This brush uses a RuntimeShader to transform UV coordinates into a spiral,
  * then applies a linear gradient to those coordinates.
  *
- * @param colors The list of colors to be used in the gradient.
  * @param direction The direction of the spiral animation (in or out).
  * @param spiralThreshold Controls the tightness of the spiral. Higher values create more turns.
  * @param time The current animation time, which drives the spiral's movement.
  * @param timeScale A factor to control the speed of the animation.
  * @param center The center point of the spiral, in relative coordinates (0.5, 0.5 is the center).
- * @param tileMode The tile mode for the underlying linear gradient.
  */
 class SpiralGradientBrush(
     sampler: Shader,
@@ -174,11 +170,11 @@ class SpiralGradientBrush(
     val shader = SpiralShader()
 
     init {
-        shader.direction = direction
-        shader.spiralThreshold = spiralThreshold
-        shader.timeScale = timeScale
-        shader.center = center
-        shader.sampler = sampler
+        setDirection( direction)
+        setSpiralThreshold(spiralThreshold)
+        setTimeScale(timeScale)
+        setCenter(center)
+        setSampler(sampler)
     }
 
     override fun createShader(size: Size): Shader {
@@ -209,18 +205,5 @@ class SpiralGradientBrush(
 
     fun setSpiralThreshold(spiralThreshold: Float) {
         shader.spiralThreshold = spiralThreshold
-    }
-
-
-    companion object {
-
-        fun createSampler(
-            colors: GradientColors,
-            tileMode: Shader.TileMode,
-        ) = LinearGradient(
-            0f, 0f, 1f, 0f, // A 1D gradient is sufficient
-            colors.colors.map { it.toArgb() }.toIntArray(),
-            null,
-            tileMode)
     }
 }

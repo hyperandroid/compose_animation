@@ -1,5 +1,6 @@
 package com.spellington.animationtest.gradient
 
+import android.R
 import android.graphics.Shader
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -25,7 +26,9 @@ import com.spellington.animationtest.gradient.brush.FlowerGradientBrush
 import com.spellington.animationtest.gradient.brush.GradientColors
 import com.spellington.animationtest.gradient.brush.RotationDirection
 import com.spellington.animationtest.gradient.brush.SpiralGradientDirection
+import com.spellington.animationtest.util.GradientSamplerOrientation
 import com.spellington.animationtest.util.PausableAnimatedTime
+import com.spellington.animationtest.util.SamplerFactory
 
 data class FlowerEffect(
     val rotationTimeScale: Float = .5f,
@@ -34,9 +37,10 @@ data class FlowerEffect(
     val direction: SpiralGradientDirection = SpiralGradientDirection.Out,
     val rotationDirection: RotationDirection = RotationDirection.CounterClockwise,
     val center: Offset = Offset(.5f, .5f),
-    val alphaThreshold: Float = .02f,
     val petalInfluence: Float = 1f,
     val wobblyFactor: Float = 0f,
+
+    val hardSampler: Boolean = false,
     val colors: List<Color> = palettes[0],
     val tileMode: Shader.TileMode = Shader.TileMode.MIRROR,
 )
@@ -49,6 +53,7 @@ val FlowerEffects = listOf(
         colors = palettes[5],
         wobblyFactor = .3f,
         inOutTimeScale = .5f,
+        hardSampler = true,
     ),
     FlowerEffect(
         colors = palettes[2],
@@ -80,6 +85,7 @@ val FlowerEffects = listOf(
         inOutTimeScale = .5f,
         center = Offset(.5f, .5f),
         tileMode = Shader.TileMode.REPEAT,
+        hardSampler = true,
     ),
 )
 
@@ -95,6 +101,8 @@ fun Flower(
     center: Offset = Offset(.5f, .5f),
     petalInfluence: Float = 1f,
     wobblyFactor: Float = 0f,
+
+    hardSampler: Boolean = false,
     colors: List<Color> = palettes[0],
     tileMode: Shader.TileMode = Shader.TileMode.MIRROR,
     onClick: () -> Unit = {},
@@ -102,9 +110,11 @@ fun Flower(
 
     val sampler by remember(colors, tileMode) {
         mutableStateOf(
-            FlowerGradientBrush.createSampler(
+            SamplerFactory.createSampler(
+                orientation = GradientSamplerOrientation.Horizontal,
                 colors = GradientColors(colors),
                 tileMode = tileMode,
+                hardColorTransition = hardSampler,
             )
         )
     }
@@ -112,7 +122,7 @@ fun Flower(
     val brush by remember {
         mutableStateOf(
             FlowerGradientBrush(
-                sampler = sampler,
+                sampler = sampler.sampler,
                 rotationTimeScale = rotationTimeScale,
                 inOutTimeScale = inOutTimeScale,
                 flowerPetals = petals,
@@ -125,6 +135,18 @@ fun Flower(
         )
     }
 
+    brush.run {
+        setSampler(sampler.sampler)
+        setPetals(petals)
+        setRotationDirection(rotationDirection)
+        setDirection(direction)
+        setCenter(center)
+        setInOutTimeScale(inOutTimeScale)
+        setRotationTimeScale(rotationTimeScale)
+        setPetalInfluence(petalInfluence)
+        setWobblyFactor(wobblyFactor)
+    }
+
     PausableAnimatedTime(isPaused = !animate) { time ->
         Box(
             modifier = modifier
@@ -133,30 +155,16 @@ fun Flower(
                     onClick()
                 }
         ) {
-
             Box(
                 modifier = Modifier
                     .fillMaxSize()
                     .drawWithCache {
-
-                        brush.run {
-                            setSampler(sampler)
-                            setPetals(petals)
-                            setRotationDirection(rotationDirection)
-                            setDirection(direction)
-                            setCenter(center)
-                            setInOutTimeScale(inOutTimeScale)
-                            setRotationTimeScale(rotationTimeScale)
-                            setPetalInfluence(petalInfluence)
-                            setWobblyFactor(wobblyFactor)
-                        }
 
                         onDrawBehind {
                             brush.setTime(time)
                             drawRect(brush)
                         }
                     }
-
             )
         }
     }
@@ -186,6 +194,7 @@ fun PreviewFlowerGradient() {
                 center = currentEffect.center,
                 petalInfluence = currentEffect.petalInfluence,
                 wobblyFactor = currentEffect.wobblyFactor,
+                hardSampler = currentEffect.hardSampler,
                 colors = currentEffect.colors,
                 tileMode = currentEffect.tileMode,
             )

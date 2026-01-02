@@ -5,6 +5,7 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -29,18 +30,21 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.spellington.animationtest.gradient.brush.GradientColors
 import com.spellington.animationtest.gradient.brush.WavyGradientBrush
-import com.spellington.animationtest.gradient.brush.WavyGradientOrientation
+import com.spellington.animationtest.util.GradientSamplerOrientation
 import com.spellington.animationtest.util.PausableAnimatedTime
+import com.spellington.animationtest.util.SamplerFactory
 import com.spellington.animationtest.waves.Waves
 
 
 data class WavyGradientEffect(
     val timeScale: Float = .5f,
-    val direction: WavyGradientOrientation = WavyGradientOrientation.Horizontal,
+    val direction: GradientSamplerOrientation = GradientSamplerOrientation.Horizontal,
     val amplitude: Float = .1f,
     val period: Float = 2f,
     val colors: List<Color> = palettes[0],
     val tileMode: Shader.TileMode = Shader.TileMode.MIRROR,
+    val bounds: Pair<Float, Float> = 0f to 1f,
+    val hardSampler: Boolean = false,
 ) {
 
     companion object {
@@ -102,10 +106,13 @@ val WavyGradientEffects = listOf(
         tileMode = Shader.TileMode.MIRROR
     ),
     WavyGradientEffect(
-        colors=WavyGradientEffect.palettes[3],
-        direction = WavyGradientOrientation.Vertical,
-        amplitude = .5f,
-        period = 1f,
+        colors=WavyGradientEffect.palettes[1],
+        direction = GradientSamplerOrientation.Vertical,
+        amplitude = .1f,
+        period = 3f,
+        bounds = .35f to .65f,
+        tileMode = Shader.TileMode.CLAMP,
+        hardSampler = true,
     ),
 )
 
@@ -113,10 +120,13 @@ val WavyGradientEffects = listOf(
 fun WavyGradient(
     modifier: Modifier = Modifier,
     animate: Boolean = true,
-    direction: WavyGradientOrientation = WavyGradientOrientation.Horizontal,
+    direction: GradientSamplerOrientation = GradientSamplerOrientation.Horizontal,
     amplitude: Float = .1f,
-    period: Float = 2f,
+    period: Float = 4f,
     timeScale: Float = .2f,
+
+    hardSampler: Boolean = false,
+    bounds: Pair<Float, Float> = 0f to 1f,
     colors: List<Color> = WavyGradientEffect.palettes[0],
     tileMode: Shader.TileMode = Shader.TileMode.CLAMP,
     onClick: () -> Unit = {}
@@ -124,10 +134,12 @@ fun WavyGradient(
 
     val sampler by remember(direction, colors, tileMode) {
         mutableStateOf(
-            WavyGradientBrush.createSampler(
+            SamplerFactory.createSampler(
                 orientation = direction,
-                GradientColors(colors),
-                tileMode
+                bounds = bounds,
+                colors = GradientColors(colors),
+                tileMode = tileMode,
+                hardColorTransition = hardSampler,
             )
         )
     }
@@ -200,24 +212,36 @@ fun WavyGradient(
 @Preview
 @Composable
 fun PreviewWavyGradients() {
-    Column(modifier = Modifier
-        .fillMaxSize()
-        .verticalScroll(rememberScrollState()), // Make it scrollable
-        verticalArrangement = Arrangement.spacedBy(16.dp)
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .verticalScroll(rememberScrollState()), // Make it scrollable
+        //verticalArrangement = Arrangement.spacedBy(16.dp)
     ) {
-        WavyGradientEffects.forEach { currentEffect ->
-            WavyGradient(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(200.dp)
-                    .width(300.dp),
-                timeScale = currentEffect.timeScale,
-                direction = currentEffect.direction,
-                amplitude = currentEffect.amplitude,
-                period = currentEffect.period,
-                colors = currentEffect.colors,
-                tileMode = currentEffect.tileMode,
-            )
+        FlowRow(
+            modifier = Modifier.padding(8.dp),
+            // You can specify the arrangement for items on the main axis (horizontal)
+            horizontalArrangement = Arrangement.spacedBy(8.dp),
+            // and the arrangement for items on the cross axis (vertical)
+            verticalArrangement = Arrangement.spacedBy(16.dp),
+        ) {
+            WavyGradientEffects.forEach { currentEffect ->
+                WavyGradient(
+                    modifier = Modifier
+
+                        .width(200.dp)
+                        .height(300.dp),
+                    timeScale = currentEffect.timeScale,
+                    direction = currentEffect.direction,
+                    amplitude = currentEffect.amplitude,
+                    period = currentEffect.period,
+
+                    hardSampler = currentEffect.hardSampler,
+                    bounds = currentEffect.bounds,
+                    colors = currentEffect.colors,
+                    tileMode = currentEffect.tileMode,
+                )
+            }
         }
     }
 }

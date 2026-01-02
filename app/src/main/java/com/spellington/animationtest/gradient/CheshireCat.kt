@@ -36,14 +36,15 @@ import com.spellington.animationtest.R
 import com.spellington.animationtest.gradient.brush.GradientColors
 import com.spellington.animationtest.gradient.brush.SpiralGradientBrush
 import com.spellington.animationtest.gradient.brush.SpiralGradientDirection
+import com.spellington.animationtest.util.GradientSamplerOrientation
 import com.spellington.animationtest.util.PausableAnimatedTime
+import com.spellington.animationtest.util.SamplerFactory
 import com.spellington.animationtest.waves.Waves
 
 val palettes = arrayOf(
     // cheshire cat
     listOf(
         Color(0xff98117f),
-
         Color(0xff520759),
     ),
     // candy bar
@@ -96,7 +97,8 @@ data class CheshireCatEffect(
     val spiralThreshold: Float = 2f,
     val direction: SpiralGradientDirection = SpiralGradientDirection.Out,
     val center: Offset = Offset(.5f, .5f),
-    val alphaThreshold: Float = .02f,
+
+    val hardSampler: Boolean = false,
     val colors: List<Color> = palettes[0],
     val tileMode: Shader.TileMode = Shader.TileMode.MIRROR,
 )
@@ -104,6 +106,7 @@ data class CheshireCatEffect(
 val ChesireCatEffects = listOf(
     CheshireCatEffect(
         spiralThreshold = 4f,
+        hardSampler = true,
     ),
     CheshireCatEffect(
         timeScale = .1f,
@@ -115,6 +118,7 @@ val ChesireCatEffects = listOf(
         center = Offset(.25f, .25f),
         spiralThreshold = 4f,
         colors = palettes[5],
+        hardSampler = true,
     ),
     CheshireCatEffect(
         timeScale = .1f,
@@ -133,17 +137,23 @@ fun CheshireCat(
     timeScale: Float = .5f,
     spiralThreshold: Float = 2f,
     direction: SpiralGradientDirection = SpiralGradientDirection.In,
+
+    hardSampler: Boolean = false,
     center: Offset = Offset(.5f, .5f),
     colors: List<Color> = palettes[0],
     tileMode: Shader.TileMode = Shader.TileMode.MIRROR,
+
     onClick: () -> Unit = {},
 ) {
 
-    val sampler by remember(colors, tileMode) {
+    val sampler by remember(hardSampler, colors, tileMode) {
         mutableStateOf(
-            SpiralGradientBrush.createSampler(
+
+            SamplerFactory.createSampler(
+                orientation = GradientSamplerOrientation.Horizontal,
                 colors = GradientColors(colors),
                 tileMode = tileMode,
+                hardColorTransition = hardSampler,
             )
         )
     }
@@ -151,7 +161,7 @@ fun CheshireCat(
     val brush by remember {
         mutableStateOf(
             SpiralGradientBrush(
-                sampler = sampler,
+                sampler = sampler.sampler,
                 direction = direction,
                 spiralThreshold = spiralThreshold,
                 timeScale = timeScale,
@@ -174,7 +184,7 @@ fun CheshireCat(
                     .drawWithCache {
 
                         brush.run {
-                            setSampler(sampler)
+                            setSampler(sampler.sampler)
                             setCenter(center)
                             setDirection(direction)
                             setSpiralThreshold(spiralThreshold)
@@ -243,6 +253,7 @@ fun PreviewCheshireCat() {
                 timeScale = currentEffect.timeScale,
                 spiralThreshold = currentEffect.spiralThreshold,
                 direction = currentEffect.direction,
+                hardSampler = currentEffect.hardSampler,
                 colors = currentEffect.colors,
                 center = currentEffect.center,
                 onClick = {}

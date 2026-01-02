@@ -1,23 +1,12 @@
 package com.spellington.animationtest.gradient.brush
 
-import android.graphics.LinearGradient
 import android.graphics.RuntimeShader
 import android.graphics.Shader
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.ShaderBrush
-import androidx.compose.ui.graphics.toArgb
-import com.spellington.animationtest.gradient.WavyGradientEffect
+import com.spellington.animationtest.util.GradientSamplerOrientation
+import com.spellington.animationtest.util.GradientSampler
 
-enum class WavyGradientOrientation {
-
-    Horizontal, Vertical;
-
-    fun toFloat() = if (this == Horizontal)
-        1f
-    else
-        -1f
-
-}
 
 class WavyGradientShader() {
 
@@ -33,8 +22,8 @@ class WavyGradientShader() {
             shader.setFloatUniform("iResolution", _resolution.width, _resolution.height)
         }
 
-    private var _direction = WavyGradientOrientation.Horizontal
-    var  direction: WavyGradientOrientation
+    private var _direction = GradientSamplerOrientation.Horizontal
+    var  direction: GradientSamplerOrientation
         get() = _direction
         set(value) {
 
@@ -133,13 +122,8 @@ class WavyGradientShader() {
     }
 }
 
-class WavyGradientSampler(
-    val sampler: LinearGradient,
-    val orientation: WavyGradientOrientation,
-)
-
 class WavyGradientBrush(
-    sampler: WavyGradientSampler,
+    sampler: GradientSampler,
     timeScale: Float = .1f,
     amplitude: Float = .1f,
     period: Float = 2f,
@@ -173,52 +157,12 @@ class WavyGradientBrush(
         shader.time = time
     }
 
-    fun setSampler(sampler: WavyGradientSampler) {
+    fun setSampler(sampler: GradientSampler) {
         shader.sampler = sampler.sampler
         shader.direction = sampler.orientation
     }
 
     fun setTimeScale(timeScale: Float) {
         shader.timeScale = timeScale
-    }
-
-    companion object {
-
-        fun createSampler(
-            orientation: WavyGradientOrientation,
-            colors: GradientColors,
-            tileMode: Shader.TileMode
-        ) = if (orientation == WavyGradientOrientation.Horizontal) {
-            WavyGradientSampler(
-                orientation = WavyGradientOrientation.Horizontal,
-                sampler = createHorizontalSampler(colors, tileMode)
-            )
-        }
-        else {
-            WavyGradientSampler(
-                orientation = WavyGradientOrientation.Vertical,
-                sampler = createVerticalSampler(colors, tileMode)
-            )
-        }
-
-        private fun createHorizontalSampler(colors: GradientColors, tileMode: Shader.TileMode) =
-            createSampler(0f, 0f, 1f, 0f, colors, tileMode)
-
-        private fun createVerticalSampler(colors: GradientColors, tileMode: Shader.TileMode) =
-            createSampler(0f, 0f, 0f, 1f, colors, tileMode)
-
-        private fun createSampler(
-            x0: Float,
-            y0: Float,
-            x1: Float,
-            y1: Float,
-            colors: GradientColors,
-            tileMode: Shader.TileMode,
-        ) = LinearGradient(
-            x0, y0, x1, y1,
-            colors.colors.map { it.toArgb() }.toIntArray(),
-            null,
-            tileMode
-        )
     }
 }
