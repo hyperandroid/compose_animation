@@ -1,4 +1,4 @@
-package com.spellington.animationtest.gradient
+package com.spellington.animationtest.gradient.brush
 
 import android.graphics.LinearGradient
 import android.graphics.RuntimeShader
@@ -25,8 +25,7 @@ enum class SpiralGradientDirection {
 
 class SpiralShader() {
 
-    var shader: RuntimeShader = RuntimeShader(SPIRAL_GRADIENT_SHADER)
-        private set
+    val shader: RuntimeShader = RuntimeShader(SPIRAL_GRADIENT_SHADER)
 
     private var _resolution: Size = Size.Zero
     var resolution: Size

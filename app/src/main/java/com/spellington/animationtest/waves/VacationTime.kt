@@ -43,7 +43,6 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.graphics.ImageShader
-import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.graphics.ShaderBrush
 import androidx.compose.ui.graphics.TileMode
 import androidx.compose.ui.graphics.asComposeRenderEffect
@@ -58,7 +57,7 @@ import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.spellington.animationtest.R
-import com.spellington.animationtest.gradient.GradientColors
+import com.spellington.animationtest.gradient.brush.GradientColors
 import kotlinx.coroutines.android.awaitFrame
 import kotlin.math.cos
 import kotlin.math.max

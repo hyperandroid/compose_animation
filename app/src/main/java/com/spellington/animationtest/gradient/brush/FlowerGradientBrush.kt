@@ -1,4 +1,4 @@
-package com.spellington.animationtest.gradient
+package com.spellington.animationtest.gradient.brush
 
 import android.graphics.LinearGradient
 import android.graphics.RuntimeShader
@@ -11,8 +11,7 @@ import androidx.compose.ui.graphics.toArgb
 
 class FlowerShader() {
 
-    var shader: RuntimeShader = RuntimeShader(FLOWER_GRADIENT_SHADER)
-        private set
+    val shader: RuntimeShader = RuntimeShader(FLOWER_GRADIENT_SHADER)
 
     private var _petals = 5f
     var petals: Float

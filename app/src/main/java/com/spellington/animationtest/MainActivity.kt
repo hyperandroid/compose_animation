@@ -52,6 +52,8 @@ import com.spellington.animationtest.gradient.Flower
 import com.spellington.animationtest.gradient.FlowerEffects
 import com.spellington.animationtest.gradient.FourColorGradient
 import com.spellington.animationtest.gradient.FourColorGradientEffects
+import com.spellington.animationtest.gradient.WavyGradient
+import com.spellington.animationtest.gradient.WavyGradientEffects
 import com.spellington.animationtest.ui.theme.AnimationtestTheme
 import com.spellington.animationtest.waves.VacationTime
 import com.spellington.animationtest.waves.Waves
@@ -62,6 +64,7 @@ enum class AnimationDemos {
     SpiralGradient,
     FlowerGradient,
     FourColorGradient,
+    WavyGradient,
     Vacation,
 }
 
@@ -85,6 +88,16 @@ class MainActivity : ComponentActivity() {
                         // 3. Define the content of the drawer
                         ModalDrawerSheet {
                             Text("Drawer Title", modifier = Modifier.padding(16.dp))
+                            NavigationDrawerItem(
+                                label = { Text("Wavy Gradient") },
+                                selected = false,
+                                onClick = {
+                                    selectedAnimation = AnimationDemos.WavyGradient
+                                    scope.launch {
+                                        drawerState.close()
+                                    }
+                                }
+                            )
                             NavigationDrawerItem(
                                 label = { Text("Four Color Gradient") },
                                 selected = false,
@@ -162,12 +175,40 @@ class MainActivity : ComponentActivity() {
                                 AnimationDemos.FlowerGradient -> ShowFlowerGradient()
                                 AnimationDemos.Vacation -> VacationTime()
                                 AnimationDemos.FourColorGradient -> ShowFourColorGradients()
+                                AnimationDemos.WavyGradient -> ShowWavyGradients()
                             }
                         }
                     }
                 }
             }
         }
+    }
+}
+
+@Composable
+fun ShowWavyGradients(modifier: Modifier = Modifier) {
+
+    var effectIndex by rememberSaveable {
+        mutableIntStateOf(0)
+    }
+
+    val currentEffect = WavyGradientEffects[effectIndex % WavyGradientEffects.size]
+
+    Box(
+        modifier = modifier,
+    ) {
+        WavyGradient(
+            modifier = Modifier
+                .fillMaxSize(),
+            animate = true,
+            direction = currentEffect.direction,
+            timeScale = currentEffect.timeScale,
+            colors = currentEffect.colors,
+            tileMode = currentEffect.tileMode,
+            onClick = {
+                effectIndex += 1
+            }
+        )
     }
 }
 
