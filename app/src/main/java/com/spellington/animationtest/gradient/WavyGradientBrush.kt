@@ -4,7 +4,6 @@ import android.graphics.LinearGradient
 import android.graphics.RenderEffect
 import android.graphics.RuntimeShader
 import android.graphics.Shader
-import androidx.compose.runtime.Immutable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableFloatStateOf
@@ -20,81 +19,22 @@ import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.layout.onSizeChanged
 import kotlinx.coroutines.android.awaitFrame
 
-@Immutable
-@JvmInline
-value class GradientColors(val colors: List<Color>)
-
-private const val spiralGradient = """
+private const val wavyGradient = """
     
-    uniform shader gradient;   
-    uniform shader content;   
-    uniform float2 iResolution; 
-    uniform float iTime;
-    uniform float iTimeScale;       // make if slower(smaller value) or faster.
-    uniform float iDirection;       // -1 out, 1 in.
-    uniform float iSpiralThreshold; // bigger more spiral-ish
-    uniform float iAlphaThreshold;  // transparency threshold
-    uniform float2 iCenter;         // 0.5f by default
-    
-    float remap(float v0, float v1, float r0, float r1, float v) {
-        return r0 + (r1-r0)*(v-v0)/(v1-v0);
-    }
-    
-    float2 spiral(float2 uv, float spiral, float time) {
-        float pi = 3.1415926;
-        uv = (2*uv - 1.) - (2*iCenter - 1);
-        
-        if (iResolution.x < iResolution.y) {
-            float aspect = iResolution.y/iResolution.x;
-            uv.y *= aspect;
-        } else {
-            float aspect = iResolution.x/iResolution.y;
-            uv.x *= aspect;
-        }
-  
-        float radius = length(uv);
-        float angle = atan(uv.y, uv.x);
-
-        float t = remap(-pi, pi, -1, 1, angle);
-        
-        t = (t + spiral*radius + time);
-        
-        return float2(t, 0);
-    }
-    
-    half4 main(float2 fragCoord) {	    
-        half4 contentColor = content.eval(fragCoord);
-        float2 uv = fragCoord / iResolution;
-        
-        uv = spiral(uv, iSpiralThreshold, iTime*iDirection*iTimeScale);
-        
-        half4 color = gradient.eval(uv);
-        if (contentColor.a < iAlphaThreshold) {
-            color = half4(0.);
-        }
-       
-        return color;
-    }
 """
 
-enum class SpiralGradientDirection {
-    In, Out,
-}
-
-fun Modifier.spiralGradient(
+fun Modifier.wavyGradient(
     colors: GradientColors = GradientColors(listOf(Color.Red, Color.Blue)),
-    direction: SpiralGradientDirection = SpiralGradientDirection.Out,
-    spiralThreshold: Float = 5f,
     animate: Boolean = false,
     timeScale: Float = .1f,
     center: Offset = Offset(.5f, .5f),
     alphaThreshold: Float = .02f,
+    tileMode: Shader.TileMode = Shader.TileMode.CLAMP,
 ): Modifier = composed {
     var timeMs by remember { mutableFloatStateOf(0f) }
-    val runtimeShader = remember { RuntimeShader(spiralGradient) }
+    val runtimeShader = remember { RuntimeShader(wavyGradient) }
 
     if (animate) {
-        // Animate the time uniform on every frame.
         LaunchedEffect(Unit) {
             var startNanos = 0L
             while (true) {
@@ -121,28 +61,21 @@ fun Modifier.spiralGradient(
                     0f, 0f, 1f, 0f,
                     colors.colors.map { it.toArgb() }.toIntArray(),
                     null,
-                    Shader.TileMode.MIRROR
+                    tileMode,
                 )
             )
         }
         .graphicsLayer {
-            // This is the key: update the time uniform just before the layer is drawn.
-            runtimeShader.setFloatUniform("iTime", timeMs)
 
-            // Apply the shader as a RenderEffect.
-            // 'content' in AGSL is now the composable's content.
             clip = true
+
             renderEffect = RenderEffect
                 .createRuntimeShaderEffect(runtimeShader, "content")
                 .asComposeRenderEffect()
 
             runtimeShader.setFloatUniform(
-                "iDirection",
-                if (direction == SpiralGradientDirection.Out) -1f else 1f
-            )
-            runtimeShader.setFloatUniform(
-                "iSpiralThreshold",
-                spiralThreshold
+                "iTime",
+                timeMs
             )
             runtimeShader.setFloatUniform(
                 "iTimeScale",

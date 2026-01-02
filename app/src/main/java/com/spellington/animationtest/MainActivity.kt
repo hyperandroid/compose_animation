@@ -1,13 +1,12 @@
 package com.spellington.animationtest
 
-import android.os.Build
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.annotation.DrawableRes
-import androidx.annotation.RequiresApi
 import androidx.compose.animation.core.animate
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -15,7 +14,6 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
@@ -34,14 +32,15 @@ import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.rememberDrawerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.shadow.Shadow
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
@@ -51,7 +50,8 @@ import com.spellington.animationtest.gradient.CheshireCat
 import com.spellington.animationtest.gradient.ChesireCatEffects
 import com.spellington.animationtest.gradient.Flower
 import com.spellington.animationtest.gradient.FlowerEffects
-import com.spellington.animationtest.gradient.palettes
+import com.spellington.animationtest.gradient.FourColorGradient
+import com.spellington.animationtest.gradient.FourColorGradientEffects
 import com.spellington.animationtest.ui.theme.AnimationtestTheme
 import com.spellington.animationtest.waves.VacationTime
 import com.spellington.animationtest.waves.Waves
@@ -61,6 +61,7 @@ enum class AnimationDemos {
     Marquee,
     SpiralGradient,
     FlowerGradient,
+    FourColorGradient,
     Vacation,
 }
 
@@ -84,6 +85,16 @@ class MainActivity : ComponentActivity() {
                         // 3. Define the content of the drawer
                         ModalDrawerSheet {
                             Text("Drawer Title", modifier = Modifier.padding(16.dp))
+                            NavigationDrawerItem(
+                                label = { Text("Four Color Gradient") },
+                                selected = false,
+                                onClick = {
+                                    selectedAnimation = AnimationDemos.FourColorGradient
+                                    scope.launch {
+                                        drawerState.close()
+                                    }
+                                }
+                            )
                             NavigationDrawerItem(
                                 label = { Text("Spiral Gradient") },
                                 selected = false,
@@ -150,6 +161,7 @@ class MainActivity : ComponentActivity() {
                                 AnimationDemos.SpiralGradient -> ShowCheshireCat()
                                 AnimationDemos.FlowerGradient -> ShowFlowerGradient()
                                 AnimationDemos.Vacation -> VacationTime()
+                                AnimationDemos.FourColorGradient -> ShowFourColorGradients()
                             }
                         }
                     }
@@ -159,6 +171,31 @@ class MainActivity : ComponentActivity() {
     }
 }
 
+@Composable
+fun ShowFourColorGradients(modifier: Modifier = Modifier) {
+
+    var effectIndex by rememberSaveable {
+        mutableIntStateOf(0)
+    }
+
+    val currentEffect = FourColorGradientEffects[effectIndex % FourColorGradientEffects.size]
+
+    Box(
+        modifier = modifier,
+    ) {
+        FourColorGradient(
+            modifier = Modifier
+                .fillMaxSize(),
+            topLeft = currentEffect.topLeft,
+            topRight = currentEffect.topRight,
+            bottomLeft = currentEffect.bottomLeft,
+            bottomRight = currentEffect.bottomRight,
+            onClick = {
+                effectIndex += 1
+            }
+        )
+    }
+}
 
 @Composable
 fun ShowFlowerGradient(modifier: Modifier = Modifier) {
@@ -178,7 +215,6 @@ fun ShowFlowerGradient(modifier: Modifier = Modifier) {
             direction = currentEffect.direction,
             rotationDirection = currentEffect.rotationDirection,
             center = currentEffect.center,
-            alphaThreshold = currentEffect.alphaThreshold,
             petalInfluence = currentEffect.petalInfluence,
             wobblyFactor = currentEffect.wobblyFactor,
             colors = currentEffect.colors,
@@ -219,40 +255,19 @@ fun ShowCheshireCat(
 
     val currentEffect = ChesireCatEffects[effectIndex % ChesireCatEffects.size]
 
-    Box(modifier = modifier) {
-        CheshireCat(
-            modifier = Modifier.fillMaxSize(),
-            drawable = drawable,
-            animate = true,
-            timeScale = currentEffect.timeScale,
-            spiralThreshold = currentEffect.spiralThreshold,
-            direction = currentEffect.direction,
-            colors = currentEffect.colors,
-            center = currentEffect.center,
-            alphaThreshold = currentEffect.alphaThreshold,
-            onClick = {
-                effectIndex += 1
-            }
-        )
+    CheshireCat(
+        modifier = Modifier.fillMaxSize(),
+        drawable = drawable,
+        timeScale = currentEffect.timeScale,
+        spiralThreshold = currentEffect.spiralThreshold,
+        direction = currentEffect.direction,
+        colors = currentEffect.colors,
+        center = currentEffect.center,
+        onClick = {
+            effectIndex += 1
+        }
+    )
 
-        Waves(content =  {
-            Text(
-                text = "Tap Me",
-                modifier = Modifier
-                    .padding(16.dp)
-                    .fillMaxWidth(),
-                fontSize = 60.sp,
-                color = Color.White,
-                style = TextStyle(
-                    shadow = androidx.compose.ui.graphics.Shadow(
-                        color = Color.Black,
-                        blurRadius = 10f
-                    )
-                ),
-                textAlign = TextAlign.Center,
-            )
-        })
-    }
 }
 
 @Preview
@@ -277,7 +292,6 @@ fun PreviewFlowerGradient() {
                 direction = currentEffect.direction,
                 rotationDirection = currentEffect.rotationDirection,
                 center = currentEffect.center,
-                alphaThreshold = currentEffect.alphaThreshold,
                 petalInfluence = currentEffect.petalInfluence,
                 wobblyFactor = currentEffect.wobblyFactor,
                 colors = currentEffect.colors,
@@ -300,13 +314,11 @@ fun PreviewCheshireCat() {
                     .fillMaxWidth()
                     .height(200.dp)
                     .width(300.dp),
-                animate = true,
                 timeScale = currentEffect.timeScale,
                 spiralThreshold = currentEffect.spiralThreshold,
                 direction = currentEffect.direction,
                 colors = currentEffect.colors,
                 center = currentEffect.center,
-                alphaThreshold = currentEffect.alphaThreshold,
                 onClick = {}
             )
         }

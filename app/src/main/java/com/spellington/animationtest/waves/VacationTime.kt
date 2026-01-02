@@ -59,8 +59,6 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.spellington.animationtest.R
 import com.spellington.animationtest.gradient.GradientColors
-import com.spellington.animationtest.gradient.SpiralGradientDirection
-import com.spellington.animationtest.gradient.flowerGradient
 import kotlinx.coroutines.android.awaitFrame
 import kotlin.math.cos
 import kotlin.math.max
@@ -114,31 +112,6 @@ fun VacationTime(
                     }
                 }
             )
-
-            Canvas(
-                modifier = Modifier
-                    //.blur(16.dp)
-                    .padding(16.dp)
-                    .clip(shape = RectangleShape)
-                    .height(100.dp)
-                    .fillMaxWidth()
-                    .flowerGradient(
-                        animate = true,
-                        colors = GradientColors(
-                            listOf(
-                                Color(0xffff00ff),
-                                Color.Red,
-                                Color.Yellow,
-                                Color.White,
-                                Color.Cyan,
-
-                                )
-                        ),
-                        flowerPetals = 5f,
-                    ),
-            ) {
-                drawRect(Color.Blue)
-            }
 
             BlurRadialGradient2(
                 modifier = Modifier

@@ -99,6 +99,8 @@ fun Waves(
             }
 
             timeMs = (frameTimeNanos - startNanos) / 1_000_000_000f
+
+
         }
     }
 
@@ -114,10 +116,11 @@ fun Waves(
             }
             .graphicsLayer {
                 clip = true
+                runtimeShader.setFloatUniform("iTime", timeMs)
                 renderEffect = RenderEffect
                     .createRuntimeShaderEffect(runtimeShader, "contents")
                     .asComposeRenderEffect()
-                runtimeShader.setFloatUniform("iTime", timeMs)
+
             }
     ) {
         content()
