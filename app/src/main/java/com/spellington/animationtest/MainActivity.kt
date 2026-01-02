@@ -52,6 +52,8 @@ import com.spellington.animationtest.gradient.Flower
 import com.spellington.animationtest.gradient.FlowerEffects
 import com.spellington.animationtest.gradient.FourColorGradient
 import com.spellington.animationtest.gradient.FourColorGradientEffects
+import com.spellington.animationtest.gradient.HatchGradient
+import com.spellington.animationtest.gradient.HatchGradientEffects
 import com.spellington.animationtest.gradient.WavyGradient
 import com.spellington.animationtest.gradient.WavyGradientEffects
 import com.spellington.animationtest.ui.theme.AnimationtestTheme
@@ -65,6 +67,7 @@ enum class AnimationDemos {
     FlowerGradient,
     FourColorGradient,
     WavyGradient,
+    HatchGradient,
     Vacation,
 }
 
@@ -93,6 +96,16 @@ class MainActivity : ComponentActivity() {
                                 selected = false,
                                 onClick = {
                                     selectedAnimation = AnimationDemos.WavyGradient
+                                    scope.launch {
+                                        drawerState.close()
+                                    }
+                                }
+                            )
+                            NavigationDrawerItem(
+                                label = { Text("Hatch Gradient") },
+                                selected = false,
+                                onClick = {
+                                    selectedAnimation = AnimationDemos.HatchGradient
                                     scope.launch {
                                         drawerState.close()
                                     }
@@ -176,12 +189,46 @@ class MainActivity : ComponentActivity() {
                                 AnimationDemos.Vacation -> VacationTime()
                                 AnimationDemos.FourColorGradient -> ShowFourColorGradients()
                                 AnimationDemos.WavyGradient -> ShowWavyGradients()
+                                AnimationDemos.HatchGradient -> ShowHatchGradients()
                             }
                         }
                     }
                 }
             }
         }
+    }
+}
+
+@Composable
+fun ShowHatchGradients(modifier: Modifier = Modifier) {
+
+    var effectIndex by rememberSaveable {
+        mutableIntStateOf(0)
+    }
+
+    val currentEffect = HatchGradientEffects[effectIndex % HatchGradientEffects.size]
+
+    Box(
+        modifier = modifier,
+    ) {
+        HatchGradient(
+            modifier = Modifier
+                .fillMaxSize(),
+            animate = true,
+            direction = currentEffect.direction,
+            timeScale = currentEffect.timeScale,
+            amplitude = currentEffect.amplitude,
+            peaks = currentEffect.peaks,
+
+            bounds = currentEffect . bounds,
+            hardSampler = currentEffect.hardSampler,
+            tileMode = currentEffect.tileMode,
+            colors = currentEffect.colors,
+
+            onClick = {
+                effectIndex += 1
+            }
+        )
     }
 }
 

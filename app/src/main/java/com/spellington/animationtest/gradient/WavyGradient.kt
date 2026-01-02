@@ -30,87 +30,48 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.spellington.animationtest.gradient.brush.GradientColors
 import com.spellington.animationtest.gradient.brush.WavyGradientBrush
+import com.spellington.animationtest.util.GradientDomain
 import com.spellington.animationtest.util.GradientSamplerOrientation
 import com.spellington.animationtest.util.PausableAnimatedTime
 import com.spellington.animationtest.util.SamplerFactory
+import com.spellington.animationtest.util.samplePalettes
 import com.spellington.animationtest.waves.Waves
-
 
 data class WavyGradientEffect(
     val timeScale: Float = .5f,
     val direction: GradientSamplerOrientation = GradientSamplerOrientation.Horizontal,
     val amplitude: Float = .1f,
     val period: Float = 2f,
-    val colors: List<Color> = palettes[0],
+
+    val colors: List<Color> = samplePalettes[0],
     val tileMode: Shader.TileMode = Shader.TileMode.MIRROR,
-    val bounds: Pair<Float, Float> = 0f to 1f,
+    val bounds: GradientDomain = 0f to 1f,
     val hardSampler: Boolean = false,
-) {
-
-    companion object {
-        val palettes = arrayOf(
-
-            // candy bar
-            listOf(
-                Color(0xffff00ff),
-                Color.Red,
-                Color.Yellow,
-                Color.White,
-                Color.Cyan,
-            ),
-            // Sunset Flare
-            listOf(
-                Color(0xfff8b500), // Bright Yellow
-                Color(0xfff2722b), // Orange
-                Color(0xffd90429), // Deep Red
-                Color(0xff8d0801)  // Dark Burgundy
-            ),
-// Ocean Breeze
-            listOf(
-                Color(0xffe0f7fa), // Very Light Cyan
-                Color(0xff80deea), // Light Cyan
-                Color(0xff00acc1), // Main Cyan
-                Color(0xff006064)  // Deep Teal
-            ),
-// Aurora Dream
-            listOf(
-                Color(0xff00f5a0), // Bright Mint Green
-                Color(0xff00d9e9), // Electric Blue
-                Color(0xff8A2BE2), // Blue Violet
-                Color(0xff4B0082)  // Indigo
-            ),
-// Flamingo Dance
-            listOf(
-                Color(0xffff8fab), // Light Pink
-                Color(0xfffb6f92), // Hot Pink
-                Color(0xfff72585), // Neon Pink
-                Color(0xffb5179e)  // Bright Magenta
-            ),
-// Forest Moss
-            listOf(
-                Color(0xffaacc00), // Lime Green
-                Color(0xff6b9d02), // Leaf Green
-                Color(0xff436400), // Forest Green
-                Color(0xff1e2d00)  // modeDeep Forest Green
-            ),
-        )
-
-    }
-}
+)
 
 val WavyGradientEffects = listOf(
     WavyGradientEffect(
-        colors=WavyGradientEffect.palettes[0],
+        colors= samplePalettes[5],
         amplitude = .5f,
         period = 6f,
-        tileMode = Shader.TileMode.MIRROR
+        tileMode = Shader.TileMode.MIRROR,
+
     ),
     WavyGradientEffect(
-        colors=WavyGradientEffect.palettes[1],
+        colors= samplePalettes[2],
         direction = GradientSamplerOrientation.Vertical,
         amplitude = .1f,
         period = 3f,
         bounds = .35f to .65f,
+        tileMode = Shader.TileMode.CLAMP,
+        hardSampler = true,
+    ),
+    WavyGradientEffect(
+        colors= samplePalettes[3],
+        direction = GradientSamplerOrientation.Vertical,
+        amplitude = .1f,
+        period = 6f,
+        bounds = .2f to .5f,
         tileMode = Shader.TileMode.CLAMP,
         hardSampler = true,
     ),
@@ -126,8 +87,8 @@ fun WavyGradient(
     timeScale: Float = .2f,
 
     hardSampler: Boolean = false,
-    bounds: Pair<Float, Float> = 0f to 1f,
-    colors: List<Color> = WavyGradientEffect.palettes[0],
+    bounds: GradientDomain = 0f to 1f,
+    colors: List<Color> = samplePalettes[0],
     tileMode: Shader.TileMode = Shader.TileMode.CLAMP,
     onClick: () -> Unit = {}
 ) {

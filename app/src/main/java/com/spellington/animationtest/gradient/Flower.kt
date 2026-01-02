@@ -29,6 +29,7 @@ import com.spellington.animationtest.gradient.brush.SpiralGradientDirection
 import com.spellington.animationtest.util.GradientSamplerOrientation
 import com.spellington.animationtest.util.PausableAnimatedTime
 import com.spellington.animationtest.util.SamplerFactory
+import com.spellington.animationtest.util.samplePalettes
 
 data class FlowerEffect(
     val rotationTimeScale: Float = .5f,
@@ -41,7 +42,7 @@ data class FlowerEffect(
     val wobblyFactor: Float = 0f,
 
     val hardSampler: Boolean = false,
-    val colors: List<Color> = palettes[0],
+    val colors: List<Color> = samplePalettes[0],
     val tileMode: Shader.TileMode = Shader.TileMode.MIRROR,
 )
 
@@ -50,13 +51,13 @@ val FlowerEffects = listOf(
         petals = 13f,
         rotationTimeScale = .1f,
         petalInfluence = .35f,
-        colors = palettes[5],
+        colors = samplePalettes[5],
         wobblyFactor = .3f,
         inOutTimeScale = .5f,
         hardSampler = true,
     ),
     FlowerEffect(
-        colors = palettes[2],
+        colors = samplePalettes[2],
         rotationDirection = RotationDirection.Clockwise,
         inOutTimeScale = .1f,
         rotationTimeScale = .3f,
@@ -65,14 +66,14 @@ val FlowerEffects = listOf(
         petals = 7f,
         rotationTimeScale = .1f,
         petalInfluence = .35f,
-        colors = palettes[1],
+        colors = samplePalettes[1],
         center = Offset(.25f, .25f),
     ),
     FlowerEffect(
         petals = 3f,
         rotationTimeScale = .1f,
         petalInfluence = 1f,
-        colors = palettes[3],
+        colors = samplePalettes[3],
         wobblyFactor = 1f,
         inOutTimeScale = .5f,
     ),
@@ -80,7 +81,7 @@ val FlowerEffects = listOf(
         petals = 5f,
         rotationTimeScale = .1f,
         petalInfluence = .3f,
-        colors = palettes[4],
+        colors = samplePalettes[4],
         wobblyFactor = .0f,
         inOutTimeScale = .5f,
         center = Offset(.5f, .5f),
@@ -103,7 +104,7 @@ fun Flower(
     wobblyFactor: Float = 0f,
 
     hardSampler: Boolean = false,
-    colors: List<Color> = palettes[0],
+    colors: List<Color> = samplePalettes[0],
     tileMode: Shader.TileMode = Shader.TileMode.MIRROR,
     onClick: () -> Unit = {},
 ) {

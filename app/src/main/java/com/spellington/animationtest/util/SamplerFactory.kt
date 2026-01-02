@@ -16,6 +16,8 @@ enum class GradientSamplerOrientation {
         -1f
 }
 
+typealias GradientDomain = Pair<Float, Float>
+
 class GradientSampler(
     val sampler: LinearGradient,
     val orientation: GradientSamplerOrientation,

@@ -1,12 +1,11 @@
 package com.spellington.animationtest.gradient
 
 import android.graphics.Shader
-import androidx.annotation.DrawableRes
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -22,86 +21,74 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.drawWithCache
-import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.ImageBitmap
-import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.imageResource
+import androidx.compose.ui.graphics.Shadow
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.spellington.animationtest.R
 import com.spellington.animationtest.gradient.brush.GradientColors
-import com.spellington.animationtest.gradient.brush.SpiralGradientBrush
-import com.spellington.animationtest.gradient.brush.SpiralGradientDirection
+import com.spellington.animationtest.gradient.brush.HatchGradientBrush
+import com.spellington.animationtest.util.GradientDomain
 import com.spellington.animationtest.util.GradientSamplerOrientation
 import com.spellington.animationtest.util.PausableAnimatedTime
 import com.spellington.animationtest.util.SamplerFactory
 import com.spellington.animationtest.util.samplePalettes
 import com.spellington.animationtest.waves.Waves
 
-
-data class CheshireCatEffect(
+data class HatchGradientEffect(
     val timeScale: Float = .5f,
-    val spiralThreshold: Float = 2f,
-    val direction: SpiralGradientDirection = SpiralGradientDirection.Out,
-    val center: Offset = Offset(.5f, .5f),
+    val direction: GradientSamplerOrientation = GradientSamplerOrientation.Horizontal,
+    val amplitude: Float = .1f,
+    val peaks: Float = 4f,
 
-    val hardSampler: Boolean = false,
     val colors: List<Color> = samplePalettes[0],
     val tileMode: Shader.TileMode = Shader.TileMode.MIRROR,
+    val bounds: GradientDomain = 0f to 1f,
+    val hardSampler: Boolean = false,
 )
 
-val ChesireCatEffects = listOf(
-    CheshireCatEffect(
-        spiralThreshold = 4f,
+val HatchGradientEffects = listOf(
+    HatchGradientEffect(
+        colors= samplePalettes[1],
+        amplitude = .5f,
+        peaks = 8f,
+        tileMode = Shader.TileMode.MIRROR,
+        direction = GradientSamplerOrientation.Vertical,
+    ),
+    HatchGradientEffect(
+        colors= samplePalettes[1],
+        amplitude = .5f,
+        peaks = 10f,
+        tileMode = Shader.TileMode.MIRROR,
+        direction = GradientSamplerOrientation.Horizontal,
         hardSampler = true,
-    ),
-    CheshireCatEffect(
-        timeScale = .1f,
-        spiralThreshold = 1f,
-        colors = samplePalettes[1],
-        direction = SpiralGradientDirection.In,
-    ),
-    CheshireCatEffect(
-        center = Offset(.25f, .25f),
-        spiralThreshold = 4f,
-        colors = samplePalettes[5],
-        hardSampler = true,
-    ),
-    CheshireCatEffect(
-        timeScale = .1f,
-        spiralThreshold = 2f,
-        colors = samplePalettes[4],
-        center = Offset(.75f, .75f),
-        direction = SpiralGradientDirection.In,
     ),
 )
 
 @Composable
-fun CheshireCat(
+fun HatchGradient(
     modifier: Modifier = Modifier,
-    @DrawableRes drawable:  Int = R.drawable.cheshire_cat,
     animate: Boolean = true,
-    timeScale: Float = .5f,
-    spiralThreshold: Float = 2f,
-    direction: SpiralGradientDirection = SpiralGradientDirection.In,
+    direction: GradientSamplerOrientation = GradientSamplerOrientation.Horizontal,
+    timeScale: Float = .2f,
+    amplitude: Float = .1f,
+    peaks: Float = 4f,
 
     hardSampler: Boolean = false,
-    center: Offset = Offset(.5f, .5f),
+    bounds: GradientDomain = 0f to 1f,
     colors: List<Color> = samplePalettes[0],
-    tileMode: Shader.TileMode = Shader.TileMode.MIRROR,
+    tileMode: Shader.TileMode = Shader.TileMode.CLAMP,
 
-    onClick: () -> Unit = {},
+    onClick: () -> Unit = {}
 ) {
 
     val sampler by remember(hardSampler, colors, tileMode) {
         mutableStateOf(
-
             SamplerFactory.createSampler(
-                orientation = GradientSamplerOrientation.Horizontal,
+                orientation = direction,
+                bounds = bounds,
                 colors = GradientColors(colors),
                 tileMode = tileMode,
                 hardColorTransition = hardSampler,
@@ -111,12 +98,11 @@ fun CheshireCat(
 
     val brush by remember {
         mutableStateOf(
-            SpiralGradientBrush(
-                sampler = sampler.sampler,
-                direction = direction,
-                spiralThreshold = spiralThreshold,
+            HatchGradientBrush(
+                sampler = sampler,
                 timeScale = timeScale,
-                center = center,
+                amplitude = amplitude,
+                peaks = peaks,
             )
         )
     }
@@ -134,24 +120,16 @@ fun CheshireCat(
                     .fillMaxSize()
                     .drawWithCache {
 
-                        brush.run {
-                            setSampler(sampler.sampler)
-                            setCenter(center)
-                            setDirection(direction)
-                            setSpiralThreshold(spiralThreshold)
-                            setTimeScale(timeScale)
-                        }
-
                         onDrawBehind {
-                            brush.setTime(time)
+                            brush.run {
+                                setSampler(sampler)
+                                setTimeScale(timeScale)
+                                setTime(time)
+                            }
                             drawRect(brush)
                         }
                     }
             )
-
-            val resources = LocalContext.current.resources
-            val imageBitmap = ImageBitmap.imageResource(resources, drawable)
-
 
             Waves(
                 modifier = Modifier.align(Alignment.BottomCenter),
@@ -160,12 +138,6 @@ fun CheshireCat(
                         horizontalAlignment = Alignment.CenterHorizontally,
 
                         ) {
-                        Image(
-                            bitmap = imageBitmap,
-                            contentDescription = "Cheshire Cat",
-                            modifier = Modifier
-                                .fillMaxSize(0.5f)
-                        )
                         Text(
                             text = "Tap Me",
                             modifier = Modifier
@@ -174,7 +146,7 @@ fun CheshireCat(
                             fontSize = 60.sp,
                             color = Color.White,
                             style = TextStyle(
-                                shadow = androidx.compose.ui.graphics.Shadow(
+                                shadow = Shadow(
                                     color = Color.Black,
                                     blurRadius = 10f
                                 )
@@ -189,26 +161,37 @@ fun CheshireCat(
 
 @Preview
 @Composable
-fun PreviewCheshireCat() {
-    Column(modifier = Modifier
-        .fillMaxSize()
-        .verticalScroll(rememberScrollState()), // Make it scrollable
-        verticalArrangement = Arrangement.spacedBy(16.dp)
+fun PreviewHatchGradients() {
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .verticalScroll(rememberScrollState()), // Make it scrollable
+        //verticalArrangement = Arrangement.spacedBy(16.dp)
     ) {
-        ChesireCatEffects.forEach { currentEffect ->
-            CheshireCat(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(200.dp)
-                    .width(300.dp),
-                timeScale = currentEffect.timeScale,
-                spiralThreshold = currentEffect.spiralThreshold,
-                direction = currentEffect.direction,
-                hardSampler = currentEffect.hardSampler,
-                colors = currentEffect.colors,
-                center = currentEffect.center,
-                onClick = {}
-            )
+        FlowRow(
+            modifier = Modifier.padding(8.dp),
+            // You can specify the arrangement for items on the main axis (horizontal)
+            horizontalArrangement = Arrangement.spacedBy(8.dp),
+            // and the arrangement for items on the cross axis (vertical)
+            verticalArrangement = Arrangement.spacedBy(16.dp),
+        ) {
+            HatchGradientEffects.forEach { currentEffect ->
+                HatchGradient(
+                    modifier = Modifier
+
+                        .width(200.dp)
+                        .height(300.dp),
+                    timeScale = currentEffect.timeScale,
+                    direction = currentEffect.direction,
+                    amplitude = currentEffect.amplitude,
+                    peaks = currentEffect.peaks * 2,
+
+                    hardSampler = currentEffect.hardSampler,
+                    bounds = currentEffect.bounds,
+                    colors = currentEffect.colors,
+                    tileMode = currentEffect.tileMode,
+                )
+            }
         }
     }
 }

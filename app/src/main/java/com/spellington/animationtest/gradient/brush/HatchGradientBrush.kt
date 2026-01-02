@@ -4,14 +4,12 @@ import android.graphics.RuntimeShader
 import android.graphics.Shader
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.ShaderBrush
-import com.spellington.animationtest.util.GradientSamplerOrientation
 import com.spellington.animationtest.util.GradientSampler
+import com.spellington.animationtest.util.GradientSamplerOrientation
 
+class HatchGradientShader() {
 
-class WavyGradientShader() {
-
-    val shader = RuntimeShader(WAVY_GRADIENT_SHADER)
-
+    val shader = RuntimeShader(HATCH_GRADIENT_SHADER)
 
     private var _resolution: Size = Size.Zero
     var resolution: Size
@@ -22,15 +20,6 @@ class WavyGradientShader() {
             shader.setFloatUniform("iResolution", _resolution.width, _resolution.height)
         }
 
-    private var _direction = GradientSamplerOrientation.Horizontal
-    var  direction: GradientSamplerOrientation
-        get() = _direction
-        set(value) {
-
-            if (_direction == value) return
-            _direction = value
-            shader.setFloatUniform("iDirection", _direction.toFloat())
-        }
 
     private var _timeScale = .1f
     var timeScale: Float
@@ -60,13 +49,13 @@ class WavyGradientShader() {
             shader.setFloatUniform("iAmplitude", _amplitude)
         }
 
-    private var _period: Float = 2f
-    var period: Float
-        get() = _period
+    private var _peaks: Float = 1f
+    var peaks: Float
+        get() = _peaks
         set(value) {
-            if (_period == value) return
-            _period = value
-            shader.setFloatUniform("iPeriod", _period)
+            if (_peaks == value) return
+            _peaks = value
+            shader.setFloatUniform("iPeaks", _peaks)
         }
 
     private var _sampler: Shader? = null
@@ -78,16 +67,27 @@ class WavyGradientShader() {
             shader.setInputShader("gradient", value)
         }
 
+    private var _direction = GradientSamplerOrientation.Horizontal
+    var  direction: GradientSamplerOrientation
+        get() = _direction
+        set(value) {
+
+            if (_direction == value) return
+            _direction = value
+            shader.setFloatUniform("iDirection", _direction.toFloat())
+        }
+
     init {
-        shader.setFloatUniform("iDirection", direction.toFloat())
         shader.setFloatUniform("iTime", 0f)
         shader.setFloatUniform("iTimeScale", timeScale)
         shader.setFloatUniform("iAmplitude", amplitude)
-        shader.setFloatUniform("iPeriod", period)
+        shader.setFloatUniform("iDirection", direction.toFloat())
+        shader.setFloatUniform("iPeaks", peaks)
     }
 
+
     companion object {
-        private const val WAVY_GRADIENT_SHADER = """
+        private const val HATCH_GRADIENT_SHADER = """
                     
             uniform shader gradient;
             uniform float2 iResolution;
@@ -95,28 +95,43 @@ class WavyGradientShader() {
             uniform float iDirection;
             uniform float iTimeScale;       // make it slower(smaller value) or faster.
             uniform float iAmplitude;
-            uniform float iPeriod;
+            uniform float iPeaks;
         
-            float2 horizontalWaves(float2 uv, float amplitude, float period, float time) {
-                uv.x += amplitude * sin(uv.y * period + time) ;   // horizontal waves
+            float2 hatchy(float2 uv, float stripes, float factor) {
+                float displacement = stripes * uv.y + iTime;
+                float repeat = fract(displacement);
+                int index = int(displacement);
+                if (mod(float(index),2)==0) {
+                    uv.x += factor*repeat;
+                } else {
+                    uv.x += factor*(1.-repeat);
+                }
+                
                 return uv;
             }
+        
+            float2 hatchyV(float2 uv, float stripes, float factor) {
+                float displacement = stripes * uv.x + iTime;
+                float repeat = fract(displacement);
+                int index = int(displacement);
+                if (mod(float(index),2)==0) {
+                    uv.y += factor*repeat;
+                } else {
+                    uv.y += factor*(1.-repeat);
+                }
                 
-            float2 verticalWaves(float2 uv, float amplitude, float period, float time) {
-                uv.y += amplitude * sin(uv.x * period + time);   // horizontal waves
                 return uv;
             }
             
+        
             half4 main(float2 fragCoord) {
                 float2 uv = fragCoord.xy/iResolution.xy;
                 
-                if (iDirection > 0) {
-                    uv = horizontalWaves(uv, iAmplitude, iPeriod, iTime * iTimeScale);
-                } else {
-                    uv = verticalWaves(uv, iAmplitude, iPeriod, iTime * iTimeScale);
-                }
-                
-   
+                if (iDirection > 0)
+                    uv = hatchy(uv, iPeaks, iAmplitude);
+                else 
+                    uv = hatchyV(uv, iPeaks, iAmplitude);
+
                 half4 color = gradient.eval(uv);
                 return color;
             }
@@ -125,23 +140,23 @@ class WavyGradientShader() {
     }
 }
 
-class WavyGradientBrush(
+class HatchGradientBrush(
     sampler: GradientSampler,
     time: Float = 0f,
     timeScale: Float = .1f,
-    amplitude: Float = .1f,
-    period: Float = 2f,
+    amplitude: Float = 1f,
+    peaks: Float = 4f,
 ) : ShaderBrush() {
 
-    private val shader = WavyGradientShader()
+    private val shader = HatchGradientShader()
     private var internalSize: Size = Size.Zero
 
     init {
         setSampler(sampler)
         setTimeScale(timeScale)
         setAmplitude(amplitude)
-        setPeriod(period)
         setTime(time)
+        setPeaks(peaks)
     }
 
     override fun createShader(size: Size): Shader {
@@ -152,10 +167,6 @@ class WavyGradientBrush(
 
     fun setAmplitude(amplitude: Float) {
         shader.amplitude = amplitude
-    }
-
-    fun setPeriod(period: Float) {
-        shader.period = period
     }
 
     fun setTime(time: Float) {
@@ -169,5 +180,9 @@ class WavyGradientBrush(
 
     fun setTimeScale(timeScale: Float) {
         shader.timeScale = timeScale
+    }
+
+    fun setPeaks(peaks: Float) {
+        shader.peaks = peaks
     }
 }
