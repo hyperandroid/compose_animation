@@ -13,10 +13,15 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
+import androidx.compose.runtime.withFrameNanos
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.drawWithCache
 import androidx.compose.ui.graphics.Color
 
 import androidx.compose.ui.tooling.preview.Preview
@@ -91,12 +96,16 @@ val FourColorGradientEffects = listOf(
 @Composable
 fun FourColorGradient(
     modifier: Modifier = Modifier,
+    animate: Boolean = true,
+    timeScale: Float = .1f,
     topLeft: Color,
     topRight: Color,
     bottomLeft: Color,
     bottomRight: Color,
     onClick: () -> Unit = {}
 ) {
+
+    var time by remember { mutableFloatStateOf(0f) }
 
     val brush by remember {
         mutableStateOf(
@@ -114,15 +123,36 @@ fun FourColorGradient(
         setTopRightColor(topRight)
         setBottomLeftColor(bottomLeft)
         setBottomRightColor(bottomRight)
+        setTimeScale(timeScale)
     }
 
+    if (animate) {
+        LaunchedEffect(Unit) {
+            var timeStart = 0f
+            while (true) {
+                withFrameNanos {
+                    if (timeStart == 0f) {
+                        timeStart = it.toFloat()
+                    }
+
+                    time = (it - timeStart) / 1_000_000_000f
+                }
+            }
+        }
+    }
 
     Box(
         modifier = modifier
             .fillMaxSize()
-            .background(brush)
             .clickable {
                 onClick()
+            }
+            .drawWithCache {
+
+                onDrawBehind {
+                    brush.setTime(time)
+                    drawRect(brush)
+                }
             }
     )
 }
