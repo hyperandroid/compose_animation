@@ -77,7 +77,7 @@ class WavyGradientShader() {
         set(value) {
             if (_period == value) return
             _period = value
-            shader.setFloatUniform("iAmplitude", _period)
+            shader.setFloatUniform("iPeriod", _period)
         }
 
     private var _sampler: Shader? = null
@@ -133,26 +133,26 @@ class WavyGradientShader() {
     }
 }
 
+class WavyGradientSampler(
+    val sampler: LinearGradient,
+    val orientation: WavyGradientOrientation,
+)
 
 class WavyGradientBrush(
-    var orientation: WavyGradientOrientation = WavyGradientOrientation.Horizontal,
+    sampler: WavyGradientSampler,
     timeScale: Float = .1f,
     amplitude: Float = .1f,
     period: Float = 2f,
-    var colors: GradientColors = GradientColors(WavyGradientEffect.palettes[0]),
-    var tileMode: Shader.TileMode = Shader.TileMode.CLAMP,
 ) : ShaderBrush() {
 
+    private val shader = WavyGradientShader()
     private var internalSize: Size = Size.Zero
 
-    val shader = WavyGradientShader()
-
     init {
-        shader.direction = orientation
-        shader.timeScale = timeScale
-        shader.amplitude = amplitude
-        shader.period = period
-        setSamplerImpl()
+        setSampler(sampler)
+        setTimeScale(timeScale)
+        setAmplitude(amplitude)
+        setPeriod(period)
     }
 
     override fun createShader(size: Size): Shader {
@@ -173,23 +173,9 @@ class WavyGradientBrush(
         shader.time = time
     }
 
-    fun setDirection(d: WavyGradientOrientation) {
-        if (d == orientation) return
-        orientation = d
-        setSamplerImpl()
-    }
-
-    fun setSampler(colors: GradientColors, tileMode: Shader.TileMode) {
-        if (colors != this.colors || tileMode != this.tileMode) {
-            this.colors = colors
-            this.tileMode = tileMode
-            setSamplerImpl()
-        }
-    }
-
-    private fun setSamplerImpl() {
-        shader.sampler = createSampler(orientation, colors, tileMode)
-        shader.direction = orientation
+    fun setSampler(sampler: WavyGradientSampler) {
+        shader.sampler = sampler.sampler
+        shader.direction = sampler.orientation
     }
 
     fun setTimeScale(timeScale: Float) {
@@ -202,10 +188,18 @@ class WavyGradientBrush(
             orientation: WavyGradientOrientation,
             colors: GradientColors,
             tileMode: Shader.TileMode
-        ) = if (orientation == WavyGradientOrientation.Horizontal)
-            createHorizontalSampler(colors, tileMode)
-        else
-            createVerticalSampler(colors, tileMode)
+        ) = if (orientation == WavyGradientOrientation.Horizontal) {
+            WavyGradientSampler(
+                orientation = WavyGradientOrientation.Horizontal,
+                sampler = createHorizontalSampler(colors, tileMode)
+            )
+        }
+        else {
+            WavyGradientSampler(
+                orientation = WavyGradientOrientation.Vertical,
+                sampler = createVerticalSampler(colors, tileMode)
+            )
+        }
 
         private fun createHorizontalSampler(colors: GradientColors, tileMode: Shader.TileMode) =
             createSampler(0f, 0f, 1f, 0f, colors, tileMode)

@@ -97,14 +97,14 @@ data class WavyGradientEffect(
 val WavyGradientEffects = listOf(
     WavyGradientEffect(
         colors=WavyGradientEffect.palettes[0],
-        amplitude = .4f,
-        period = .6f,
-        tileMode = Shader.TileMode.CLAMP
+        amplitude = .5f,
+        period = 6f,
+        tileMode = Shader.TileMode.MIRROR
     ),
     WavyGradientEffect(
         colors=WavyGradientEffect.palettes[3],
         direction = WavyGradientOrientation.Vertical,
-        amplitude = 3f,
+        amplitude = .5f,
         period = 1f,
     ),
 )
@@ -122,15 +122,23 @@ fun WavyGradient(
     onClick: () -> Unit = {}
 ) {
 
+    val sampler by remember(direction, colors, tileMode) {
+        mutableStateOf(
+            WavyGradientBrush.createSampler(
+                orientation = direction,
+                GradientColors(colors),
+                tileMode
+            )
+        )
+    }
+
     val brush by remember {
         mutableStateOf(
             WavyGradientBrush(
-                orientation = direction,
+                sampler = sampler,
                 amplitude = amplitude,
                 period = period,
                 timeScale = timeScale,
-                colors = GradientColors(colors),
-                tileMode = tileMode
             )
         )
     }
@@ -150,12 +158,11 @@ fun WavyGradient(
 
                         onDrawBehind {
                             brush.run {
-                                setDirection(direction)
+                                setSampler(sampler)
                                 setTimeScale(timeScale)
                                 setTime(time)
                                 setAmplitude(amplitude)
                                 setPeriod(period)
-                                setSampler(GradientColors(colors), tileMode)
                             }
                             drawRect(brush)
                         }
