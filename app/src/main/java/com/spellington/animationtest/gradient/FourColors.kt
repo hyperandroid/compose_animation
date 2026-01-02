@@ -1,7 +1,6 @@
 package com.spellington.animationtest.gradient
 
 
-import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -26,6 +25,7 @@ import androidx.compose.ui.graphics.Color
 
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.spellington.animationtest.util.PausableAnimatedTime
 
 data class FourColorGradientEffect(
     val topLeft: Color,
@@ -105,8 +105,6 @@ fun FourColorGradient(
     onClick: () -> Unit = {}
 ) {
 
-    var time by remember { mutableFloatStateOf(0f) }
-
     val brush by remember {
         mutableStateOf(
             FourColorGradientBrush(
@@ -126,35 +124,23 @@ fun FourColorGradient(
         setTimeScale(timeScale)
     }
 
-    if (animate) {
-        LaunchedEffect(Unit) {
-            var timeStart = 0f
-            while (true) {
-                withFrameNanos {
-                    if (timeStart == 0f) {
-                        timeStart = it.toFloat()
+    PausableAnimatedTime(isPaused = !animate) { time ->
+
+        Box(
+            modifier = modifier
+                .fillMaxSize()
+                .clickable {
+                    onClick()
+                }
+                .drawWithCache {
+
+                    onDrawBehind {
+                        brush.setTime(time)
+                        drawRect(brush)
                     }
-
-                    time = (it - timeStart) / 1_000_000_000f
                 }
-            }
-        }
+        )
     }
-
-    Box(
-        modifier = modifier
-            .fillMaxSize()
-            .clickable {
-                onClick()
-            }
-            .drawWithCache {
-
-                onDrawBehind {
-                    brush.setTime(time)
-                    drawRect(brush)
-                }
-            }
-    )
 }
 
 @Preview

@@ -37,6 +37,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.spellington.animationtest.R
+import com.spellington.animationtest.util.PausableAnimatedTime
 import com.spellington.animationtest.waves.Waves
 
 val palettes = arrayOf(
@@ -139,8 +140,6 @@ fun CheshireCat(
     onClick: () -> Unit = {},
 ) {
 
-    var time by remember { mutableFloatStateOf(0f) }
-
     val sampler by remember(colors, tileMode) {
         mutableStateOf(
             SpiralGradientBrush.createSampler(
@@ -162,82 +161,69 @@ fun CheshireCat(
         )
     }
 
-    if (animate) {
-        LaunchedEffect(Unit) {
-            var timeStart = 0f
-            while (true) {
-                withFrameNanos {
-                    if (timeStart == 0f) {
-                        timeStart = it.toFloat()
-                    }
-
-                    time = (it - timeStart) / 1_000_000_000f
-                }
-            }
-        }
-    }
-
-    Box(
-        modifier = modifier
-            .fillMaxSize()
-            .clickable {
-                onClick()
-            }
-    ) {
+    PausableAnimatedTime(isPaused = !animate) { time ->
         Box(
-            modifier = Modifier
+            modifier = modifier
                 .fillMaxSize()
-                .drawWithCache {
-
-                    brush.run {
-                        setSampler(sampler)
-                        setCenter(center)
-                        setDirection(direction)
-                        setSpiralThreshold(spiralThreshold)
-                        setTimeScale(timeScale)
-                    }
-
-                    onDrawBehind {
-                        brush.setTime(time)
-                        drawRect(brush)
-                    }
+                .clickable {
+                    onClick()
                 }
-        )
+        ) {
+            Box(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .drawWithCache {
 
-        val resources = LocalContext.current.resources
-        val imageBitmap = ImageBitmap.imageResource(resources, drawable)
+                        brush.run {
+                            setSampler(sampler)
+                            setCenter(center)
+                            setDirection(direction)
+                            setSpiralThreshold(spiralThreshold)
+                            setTimeScale(timeScale)
+                        }
+
+                        onDrawBehind {
+                            brush.setTime(time)
+                            drawRect(brush)
+                        }
+                    }
+            )
+
+            val resources = LocalContext.current.resources
+            val imageBitmap = ImageBitmap.imageResource(resources, drawable)
 
 
-        Waves(
-            modifier = Modifier.align(Alignment.BottomCenter),
-            content =  {
-                Column(
-                    horizontalAlignment = Alignment.CenterHorizontally,
+            Waves(
+                modifier = Modifier.align(Alignment.BottomCenter),
+                content = {
+                    Column(
+                        horizontalAlignment = Alignment.CenterHorizontally,
 
-                ) {
-                    Image(
-                        bitmap = imageBitmap,
-                        contentDescription = "Cheshire Cat",
-                        modifier = Modifier
-                            .fillMaxSize(0.5f)
-                    )
-                    Text(
-                        text = "Tap Me",
-                        modifier = Modifier
-                            .padding(bottom = 16.dp)
-                            .fillMaxWidth(),
-                        fontSize = 60.sp,
-                        color = Color.White,
-                        style = TextStyle(
-                            shadow = androidx.compose.ui.graphics.Shadow(
-                                color = Color.Black,
-                                blurRadius = 10f
-                            )
-                        ),
-                        textAlign = TextAlign.Center,
-                    )
-                }
-        })
+                        ) {
+                        Image(
+                            bitmap = imageBitmap,
+                            contentDescription = "Cheshire Cat",
+                            modifier = Modifier
+                                .fillMaxSize(0.5f)
+                        )
+                        Text(
+                            text = "Tap Me",
+                            modifier = Modifier
+                                .padding(bottom = 16.dp)
+                                .fillMaxWidth(),
+                            fontSize = 60.sp,
+                            color = Color.White,
+                            style = TextStyle(
+                                shadow = androidx.compose.ui.graphics.Shadow(
+                                    color = Color.Black,
+                                    blurRadius = 10f
+                                )
+                            ),
+                            textAlign = TextAlign.Center,
+                        )
+                    }
+                })
+        }
     }
 }
 

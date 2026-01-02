@@ -28,6 +28,7 @@ import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.spellington.animationtest.util.PausableAnimatedTime
 
 data class FlowerEffect(
     val rotationTimeScale: Float = .5f,
@@ -102,8 +103,6 @@ fun Flower(
     onClick: () -> Unit = {},
 ) {
 
-    var time by remember { mutableFloatStateOf(0f) }
-
     val sampler by remember(colors, tileMode) {
         mutableStateOf(
             FlowerGradientBrush.createSampler(
@@ -129,53 +128,40 @@ fun Flower(
         )
     }
 
-    if (animate) {
-        LaunchedEffect(Unit) {
-            var timeStart = 0f
-            while (true) {
-                withFrameNanos {
-                    if (timeStart == 0f) {
-                        timeStart = it.toFloat()
-                    }
-
-                    time = (it - timeStart) / 1_000_000_000f
-                }
-            }
-        }
-    }
-
-    Box(
-        modifier = modifier
-            .fillMaxSize()
-            .clickable {
-                onClick()
-            }
-    ) {
-
+    PausableAnimatedTime(isPaused = !animate) { time ->
         Box(
-            modifier = Modifier
+            modifier = modifier
                 .fillMaxSize()
-                .drawWithCache {
-
-                    brush.run {
-                        setSampler(sampler)
-                        setPetals(petals)
-                        setRotationDirection(rotationDirection)
-                        setDirection(direction)
-                        setCenter(center)
-                        setInOutTimeScale(inOutTimeScale)
-                        setRotationTimeScale(rotationTimeScale)
-                        setPetalInfluence(petalInfluence)
-                        setWobblyFactor(wobblyFactor)
-                    }
-
-                    onDrawBehind {
-                        brush.setTime(time)
-                        drawRect(brush)
-                    }
+                .clickable {
+                    onClick()
                 }
+        ) {
 
-        )
+            Box(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .drawWithCache {
+
+                        brush.run {
+                            setSampler(sampler)
+                            setPetals(petals)
+                            setRotationDirection(rotationDirection)
+                            setDirection(direction)
+                            setCenter(center)
+                            setInOutTimeScale(inOutTimeScale)
+                            setRotationTimeScale(rotationTimeScale)
+                            setPetalInfluence(petalInfluence)
+                            setWobblyFactor(wobblyFactor)
+                        }
+
+                        onDrawBehind {
+                            brush.setTime(time)
+                            drawRect(brush)
+                        }
+                    }
+
+            )
+        }
     }
 }
 
