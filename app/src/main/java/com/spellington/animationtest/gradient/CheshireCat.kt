@@ -121,6 +121,14 @@ fun CheshireCat(
         )
     }
 
+    brush.run {
+        setSampler(sampler.sampler)
+        setCenter(center)
+        setDirection(direction)
+        setSpiralThreshold(spiralThreshold)
+        setTimeScale(timeScale)
+    }
+
     PausableAnimatedTime(isPaused = !animate) { time ->
         Box(
             modifier = modifier
@@ -133,14 +141,6 @@ fun CheshireCat(
                 modifier = Modifier
                     .fillMaxSize()
                     .drawWithCache {
-
-                        brush.run {
-                            setSampler(sampler.sampler)
-                            setCenter(center)
-                            setDirection(direction)
-                            setSpiralThreshold(spiralThreshold)
-                            setTimeScale(timeScale)
-                        }
 
                         onDrawBehind {
                             brush.setTime(time)
@@ -156,32 +156,12 @@ fun CheshireCat(
             Waves(
                 modifier = Modifier.align(Alignment.BottomCenter),
                 content = {
-                    Column(
-                        horizontalAlignment = Alignment.CenterHorizontally,
-
-                        ) {
                         Image(
                             bitmap = imageBitmap,
                             contentDescription = "Cheshire Cat",
                             modifier = Modifier
                                 .fillMaxSize(0.5f)
                         )
-                        Text(
-                            text = "Tap Me",
-                            modifier = Modifier
-                                .padding(bottom = 16.dp)
-                                .fillMaxWidth(),
-                            fontSize = 60.sp,
-                            color = Color.White,
-                            style = TextStyle(
-                                shadow = androidx.compose.ui.graphics.Shadow(
-                                    color = Color.Black,
-                                    blurRadius = 10f
-                                )
-                            ),
-                            textAlign = TextAlign.Center,
-                        )
-                    }
                 })
         }
     }

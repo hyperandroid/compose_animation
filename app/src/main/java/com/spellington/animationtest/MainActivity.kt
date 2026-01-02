@@ -82,7 +82,7 @@ class MainActivity : ComponentActivity() {
                 val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
                 val scope = rememberCoroutineScope()
                 var selectedAnimation by rememberSaveable {
-                    mutableStateOf(AnimationDemos.SpiralGradient)
+                    mutableStateOf(AnimationDemos.HatchGradient)
                 }
 
                 ModalNavigationDrawer(
@@ -302,43 +302,24 @@ fun ShowFlowerGradient(modifier: Modifier = Modifier) {
 
     val currentEffect = FlowerEffects[effectIndex % FlowerEffects.size]
 
-    Box(modifier = modifier) {
-        Flower(
-            modifier = modifier,
-            rotationTimeScale = currentEffect.rotationTimeScale,
-            inOutTimeScale = currentEffect.inOutTimeScale,
-            petals = currentEffect.petals,
-            direction = currentEffect.direction,
-            rotationDirection = currentEffect.rotationDirection,
-            center = currentEffect.center,
-            petalInfluence = currentEffect.petalInfluence,
-            wobblyFactor = currentEffect.wobblyFactor,
-            colors = currentEffect.colors,
-            tileMode = currentEffect.tileMode,
-            hardSampler = currentEffect.hardSampler,
-            onClick = {
-                effectIndex += 1
-            }
-        )
 
-        Waves(content =  {
-            Text(
-                text = "Tap Me",
-                modifier = Modifier
-                    .padding(16.dp)
-                    .fillMaxWidth(),
-                fontSize = 60.sp,
-                color = Color.White,
-                style = TextStyle(
-                    shadow = androidx.compose.ui.graphics.Shadow(
-                        color = Color.Black,
-                        blurRadius = 10f
-                    )
-                ),
-                textAlign = TextAlign.Center,
-            )
-        })
-    }
+    Flower(
+        modifier = modifier,
+        rotationTimeScale = currentEffect.rotationTimeScale,
+        inOutTimeScale = currentEffect.inOutTimeScale,
+        petals = currentEffect.petals,
+        direction = currentEffect.direction,
+        rotationDirection = currentEffect.rotationDirection,
+        center = currentEffect.center,
+        petalInfluence = currentEffect.petalInfluence,
+        wobblyFactor = currentEffect.wobblyFactor,
+        colors = currentEffect.colors,
+        tileMode = currentEffect.tileMode,
+        hardSampler = currentEffect.hardSampler,
+        onClick = {
+            effectIndex += 1
+        }
+    )
 }
 
 @Composable

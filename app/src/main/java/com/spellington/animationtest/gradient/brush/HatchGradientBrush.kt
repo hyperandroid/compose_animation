@@ -108,7 +108,7 @@ class HatchGradientShader() {
             uniform float iPeaks;
             uniform float iAngle;
         
-            float2 hatchy(float2 uv, float stripes, float factor) {
+            float2 hatchyH(float2 uv, float stripes, float factor) {
                 float displacement = stripes * uv.y + iTime;
                 float repeat = fract(displacement);
                 int index = int(displacement);
@@ -133,7 +133,6 @@ class HatchGradientShader() {
                 
                 return uv;
             }
-            
         
             half4 main(float2 fragCoord) {
                 float2 uv = fragCoord.xy/iResolution.xy;
@@ -156,7 +155,7 @@ class HatchGradientShader() {
                 uv += .5;
                                                 
                 if (iDirection > 0)
-                    uv = hatchy(uv, iPeaks, iAmplitude);
+                    uv = hatchyH(uv, iPeaks, iAmplitude);
                 else 
                     uv = hatchyV(uv, iPeaks, iAmplitude);
 
@@ -213,7 +212,7 @@ class HatchGradientBrush(
     }
 
     fun setPeaks(peaks: Float) {
-        shader.peaks = peaks
+        shader.peaks = peaks * 2
     }
 
     fun setAngle(angle: Float) {

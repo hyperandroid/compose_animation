@@ -155,19 +155,14 @@ fun Flower(
                 .clickable {
                     onClick()
                 }
-        ) {
-            Box(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .drawWithCache {
+                .drawWithCache {
 
-                        onDrawBehind {
-                            brush.setTime(time)
-                            drawRect(brush)
-                        }
+                    onDrawBehind {
+                        brush.setTime(time)
+                        drawRect(brush)
                     }
-            )
-        }
+                }
+        )
     }
 }
 

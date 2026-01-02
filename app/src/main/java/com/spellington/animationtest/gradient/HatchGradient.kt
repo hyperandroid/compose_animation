@@ -52,18 +52,20 @@ data class HatchGradientEffect(
 
 val HatchGradientEffects = listOf(
     HatchGradientEffect(
-        colors= samplePalettes[1],
-        amplitude = .5f,
-        peaks = 8f,
-        tileMode = Shader.TileMode.MIRROR,
+        colors= samplePalettes[2],
+        amplitude = .3f,
+        peaks = 3f,
+        tileMode = Shader.TileMode.CLAMP,
         direction = GradientSamplerOrientation.Vertical,
-        angle = Math.PI.toFloat() * .25f,
+        angle = Math.PI.toFloat() * .05f,
+        bounds = .45f to .75f,
+        hardSampler = true,
     ),
     HatchGradientEffect(
         colors= samplePalettes[1],
         amplitude = .5f,
-        peaks = 10f,
-        tileMode = Shader.TileMode.MIRROR,
+        peaks = 5f,
+        tileMode = Shader.TileMode.REPEAT,
         direction = GradientSamplerOrientation.Horizontal,
         hardSampler = true,
     ),
@@ -114,7 +116,9 @@ fun HatchGradient(
     brush.run {
         setSampler(sampler)
         setTimeScale(timeScale)
+        setAmplitude(amplitude)
         setAngle(angle)
+        setPeaks(peaks)
     }
 
     PausableAnimatedTime(isPaused = !animate) { time ->
@@ -124,44 +128,13 @@ fun HatchGradient(
                 .clickable {
                     onClick()
                 }
-        ) {
-            Box(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .drawWithCache {
-
-                        onDrawBehind {
-                            brush.setTime(time)
-                            drawRect(brush)
-                        }
+                .drawWithCache {
+                    onDrawBehind {
+                        brush.setTime(time)
+                        drawRect(brush)
                     }
-            )
-
-            Waves(
-                modifier = Modifier.align(Alignment.BottomCenter),
-                content = {
-                    Column(
-                        horizontalAlignment = Alignment.CenterHorizontally,
-
-                        ) {
-                        Text(
-                            text = "Tap Me",
-                            modifier = Modifier
-                                .padding(bottom = 16.dp)
-                                .fillMaxWidth(),
-                            fontSize = 60.sp,
-                            color = Color.White,
-                            style = TextStyle(
-                                shadow = Shadow(
-                                    color = Color.Black,
-                                    blurRadius = 10f
-                                )
-                            ),
-                            textAlign = TextAlign.Center,
-                        )
-                    }
-                })
-        }
+                }
+        )
     }
 }
 
@@ -172,33 +145,26 @@ fun PreviewHatchGradients() {
         modifier = Modifier
             .fillMaxSize()
             .verticalScroll(rememberScrollState()), // Make it scrollable
-        //verticalArrangement = Arrangement.spacedBy(16.dp)
+        verticalArrangement = Arrangement
+            .spacedBy(8.dp)
     ) {
-        FlowRow(
-            modifier = Modifier.padding(8.dp),
-            // You can specify the arrangement for items on the main axis (horizontal)
-            horizontalArrangement = Arrangement.spacedBy(8.dp),
-            // and the arrangement for items on the cross axis (vertical)
-            verticalArrangement = Arrangement.spacedBy(16.dp),
-        ) {
-            HatchGradientEffects.forEach { currentEffect ->
-                HatchGradient(
-                    modifier = Modifier
+        HatchGradientEffects.forEach { currentEffect ->
+            HatchGradient(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .width(300.dp)
+                    .height(200.dp),
+                timeScale = currentEffect.timeScale,
+                direction = currentEffect.direction,
+                amplitude = currentEffect.amplitude,
+                peaks = currentEffect.peaks,
+                angle = currentEffect.angle,
 
-                        .width(200.dp)
-                        .height(300.dp),
-                    timeScale = currentEffect.timeScale,
-                    direction = currentEffect.direction,
-                    amplitude = currentEffect.amplitude,
-                    peaks = currentEffect.peaks * 2,
-                    angle = currentEffect.angle,
-
-                    hardSampler = currentEffect.hardSampler,
-                    bounds = currentEffect.bounds,
-                    colors = currentEffect.colors,
-                    tileMode = currentEffect.tileMode,
-                )
-            }
+                hardSampler = currentEffect.hardSampler,
+                bounds = currentEffect.bounds,
+                colors = currentEffect.colors,
+                tileMode = currentEffect.tileMode,
+            )
         }
     }
 }
