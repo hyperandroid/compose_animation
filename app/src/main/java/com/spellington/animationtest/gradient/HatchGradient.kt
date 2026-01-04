@@ -165,7 +165,7 @@ fun PreviewHatchGradients() {
             .fillMaxSize()
             .verticalScroll(rememberScrollState()), // Make it scrollable
         verticalArrangement = Arrangement
-            .spacedBy(8.dp)
+            .spacedBy(16.dp)
     ) {
         HatchGradientEffects.forEach { currentEffect ->
             HatchGradient(

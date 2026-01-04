@@ -367,9 +367,10 @@ fun PreviewFlowerGradientGradient() {
                 center = currentEffect.center,
                 petalInfluence = currentEffect.petalInfluence,
                 wobblyFactor = currentEffect.wobblyFactor,
+
                 colors = currentEffect.colors,
-                hardSampler = currentEffect.hardSampler,
                 tileMode = currentEffect.tileMode,
+                hardSampler = currentEffect.hardSampler,
             )
         }
     }
@@ -394,7 +395,92 @@ fun PreviewSpiralGradient() {
                 direction = currentEffect.direction,
                 colors = currentEffect.colors,
                 center = currentEffect.center,
+                hardSampler = currentEffect.hardSampler,
+                tileMode = currentEffect.tileMode,
                 onClick = {}
+            )
+        }
+    }
+}
+@Preview
+@Composable
+fun PreviewWavyGradient() {
+    Column(modifier = Modifier
+        .fillMaxSize()
+        .verticalScroll(rememberScrollState()), // Make it scrollable
+        verticalArrangement = Arrangement.spacedBy(16.dp)
+    ) {
+        WavyGradientEffects.forEach { currentEffect ->
+            WavyGradient(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .width(300.dp)
+                    .height(200.dp),
+                timeScale = currentEffect.timeScale,
+                direction = currentEffect.direction,
+                amplitude = currentEffect.amplitude,
+                period = currentEffect.period,
+                angle = currentEffect.angle,
+
+                hardSampler = currentEffect.hardSampler,
+                bounds = currentEffect.bounds,
+                colors = currentEffect.colors,
+                tileMode = currentEffect.tileMode,
+            )
+        }
+    }
+}
+
+@Preview
+@Composable
+fun PreviewHatchGradients() {
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .verticalScroll(rememberScrollState()), // Make it scrollable
+        verticalArrangement = Arrangement
+            .spacedBy(16.dp)
+    ) {
+        HatchGradientEffects.forEach { currentEffect ->
+            HatchGradient(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .width(300.dp)
+                    .height(200.dp),
+                timeScale = currentEffect.timeScale,
+                direction = currentEffect.direction,
+                amplitude = currentEffect.amplitude,
+                peaks = currentEffect.peaks,
+                angle = currentEffect.angle,
+
+                hardSampler = currentEffect.hardSampler,
+                bounds = currentEffect.bounds,
+                colors = currentEffect.colors,
+                tileMode = currentEffect.tileMode,
+            )
+        }
+    }
+}
+
+@Preview
+@Composable
+fun FourColorGradient1() {
+    Column(modifier = Modifier
+        .fillMaxSize()
+        .verticalScroll(rememberScrollState()), // Make it scrollable
+        verticalArrangement = Arrangement.spacedBy(8.dp)
+    ) {
+
+        FourColorGradientEffects.forEach { effect ->
+            FourColorGradient(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .width(300.dp)
+                    .height(100.dp),
+                topLeft = effect.topLeft,
+                topRight = effect.topRight,
+                bottomLeft = effect.bottomLeft,
+                bottomRight = effect.bottomRight,
             )
         }
     }

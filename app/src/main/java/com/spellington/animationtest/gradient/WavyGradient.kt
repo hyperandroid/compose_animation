@@ -43,24 +43,6 @@ data class WavyGradientEffect(
 
 val WavyGradientEffects = listOf(
     WavyGradientEffect(
-        colors= samplePalettes[1],
-        amplitude = .5f,
-        period = 6f,
-        tileMode = Shader.TileMode.MIRROR,
-        direction = GradientSamplerOrientation.Horizontal,
-        // angle = (Math.PI * .25).toFloat()
-    ),
-    WavyGradientEffect(
-        colors= samplePalettes[2],
-        direction = GradientSamplerOrientation.Vertical,
-        amplitude = .1f,
-        period = 36f,
-        bounds = .25f to .75f,
-        tileMode = Shader.TileMode.CLAMP,
-        hardSampler = true,
-        angle = (Math.PI * .1).toFloat(),
-    ),
-    WavyGradientEffect(
         colors= samplePalettes[5],
         direction = GradientSamplerOrientation.Vertical,
         amplitude = .1f,
@@ -80,6 +62,25 @@ val WavyGradientEffects = listOf(
         angle = (Math.PI * .05).toFloat(),
         timeScale = -.3f,
     ),
+    WavyGradientEffect(
+        colors= samplePalettes[1],
+        amplitude = .5f,
+        period = 6f,
+        tileMode = Shader.TileMode.MIRROR,
+        direction = GradientSamplerOrientation.Horizontal,
+        // angle = (Math.PI * .25).toFloat()
+    ),
+    WavyGradientEffect(
+        colors= samplePalettes[2],
+        direction = GradientSamplerOrientation.Vertical,
+        amplitude = .1f,
+        period = 36f,
+        bounds = .25f to .75f,
+        tileMode = Shader.TileMode.CLAMP,
+        hardSampler = true,
+        angle = (Math.PI * .1).toFloat(),
+    ),
+
 )
 
 @Composable
