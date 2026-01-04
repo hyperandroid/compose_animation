@@ -118,6 +118,19 @@ class WavyGradientShader() {
                 return uv;
             }
             
+            float2 rotate(float2 uv, float angle) {
+                // rotate uv around the center of the composable
+                float c = cos(angle);
+                float s = sin(angle);
+                mat2 mat = mat2(c,-s,s,c);
+                
+                float2 nuv = uv;
+                nuv -= uv * .5;
+                nuv = mat * nuv;
+                nuv += uv * .5;
+                return nuv;
+            }
+            
             half4 main(float2 fragCoord) {
                 float2 uv = fragCoord.xy/iResolution.xy;
                 
@@ -126,15 +139,8 @@ class WavyGradientShader() {
                 float aspect;
                 aspect = iResolution.x / iResolution.y;
                 uv.x *= aspect;
-                
-                // rotate uv around the center of the composable
-                float a = iAngle;
-                float c = cos(a);
-                float s = sin(a);
-                mat2 mat = mat2(c,-s,s,c);
-                uv -= float2(aspect*.5, .5);
-                uv = mat * uv;
-                uv += float2(aspect*.5, .5);
+             
+                uv = rotate(uv, iAngle);
                 
                 if (iDirection > 0) {
                     uv = horizontalWaves(uv, iAmplitude, iPeriod, iTime * iTimeScale);

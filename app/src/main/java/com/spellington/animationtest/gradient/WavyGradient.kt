@@ -100,7 +100,7 @@ fun WavyGradient(
     onClick: () -> Unit = {}
 ) {
 
-    val sampler by remember(hardSampler, colors, tileMode) {
+    val sampler by remember(hardSampler, bounds, colors, tileMode) {
         mutableStateOf(
             SamplerFactory.createSampler(
                 orientation = direction,
