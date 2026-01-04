@@ -118,38 +118,40 @@ class WavyGradientShader() {
                 return uv;
             }
             
-            float2 rotate(float2 uv, float angle) {
+            float remap(float v0, float v1, float r0, float r1, float v) {
+                return r0 + (r1-r0)*(v-v0)/(v1-v0);
+            }
+
+            float2 rotate(float2 uv, float angle, float aspect) {
                 // rotate uv around the center of the composable
                 float c = cos(angle);
                 float s = sin(angle);
-                mat2 mat = mat2(c,-s,s,c);
-                
+                mat2 mat = mat2(c,s,-s,c);
+
+                float2 center =  float2(aspect, 1) * .5;
                 float2 nuv = uv;
-                nuv -= uv * .5;
+                
+                nuv -= center;
                 nuv = mat * nuv;
-                nuv += uv * .5;
+                nuv += center;
                 return nuv;
             }
             
             half4 main(float2 fragCoord) {
                 float2 uv = fragCoord.xy/iResolution.xy;
-                
-                // Correct aspect ratio. keep y axis 0..1, 
-                // but stretch X according to the aspect ratio
-                float aspect;
-                aspect = iResolution.x / iResolution.y;
-                uv.x *= aspect;
-             
-                uv = rotate(uv, iAngle);
+                float aspect = iResolution.x / iResolution.y;
+
+                uv.x *= aspect; 
+                uv = rotate(uv, iAngle, aspect);
                 
                 if (iDirection > 0) {
                     uv = horizontalWaves(uv, iAmplitude, iPeriod, iTime * iTimeScale);
                 } else {
                     uv = verticalWaves(uv, iAmplitude, iPeriod, iTime * iTimeScale);
                 }
-                
-   
+
                 half4 color = gradient.eval(uv);
+                
                 return color;
             }
         """

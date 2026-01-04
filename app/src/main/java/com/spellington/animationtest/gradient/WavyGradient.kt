@@ -74,7 +74,7 @@ val WavyGradientEffects = listOf(
         colors= samplePalettes[2],
         direction = GradientSamplerOrientation.Vertical,
         amplitude = .1f,
-        period = 36f,
+        period = 18f,
         bounds = .25f to .75f,
         tileMode = Shader.TileMode.CLAMP,
         hardSampler = true,
@@ -152,7 +152,7 @@ fun WavyGradient(
 
 @Preview
 @Composable
-fun PreviewWavyGradients() {
+fun PreviewWavyGradientPresets() {
     Column(
         modifier = Modifier
             .fillMaxSize()

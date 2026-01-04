@@ -150,7 +150,7 @@ fun HatchGradient(
 
 @Preview
 @Composable
-fun PreviewHatchGradients() {
+fun PreviewHatchGradientPresets() {
     Column(
         modifier = Modifier
             .fillMaxSize()

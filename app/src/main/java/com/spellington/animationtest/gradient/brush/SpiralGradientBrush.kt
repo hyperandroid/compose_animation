@@ -154,7 +154,6 @@ class SpiralShader() {
  *
  * @param direction The direction of the spiral animation (in or out).
  * @param spiralThreshold Controls the tightness of the spiral. Higher values create more turns.
- * @param time The current animation time, which drives the spiral's movement.
  * @param timeScale A factor to control the speed of the animation.
  * @param center The center point of the spiral, in relative coordinates (0.5, 0.5 is the center).
  */

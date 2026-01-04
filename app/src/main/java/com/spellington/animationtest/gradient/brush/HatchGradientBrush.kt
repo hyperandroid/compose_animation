@@ -134,25 +134,28 @@ class HatchGradientShader() {
                 return uv;
             }
         
+            float2 rotate(float2 uv, float angle, float aspect) {
+                // rotate uv around the center of the composable
+                float c = cos(angle);
+                float s = sin(angle);
+                mat2 mat = mat2(c,s,-s,c);
+
+                float2 center =  float2(aspect, 1) * .5;
+                float2 nuv = uv;
+                
+                nuv -= center;
+                nuv = mat * nuv;
+                nuv += center;
+                return nuv;
+            }
+            
             half4 main(float2 fragCoord) {
                 float2 uv = fragCoord.xy/iResolution.xy;
 
-                // Correct for aspect ratio to make the spiral circular.
-                if (iResolution.x < iResolution.y) {
-                    float aspect = iResolution.y / iResolution.x;
-                    uv.y *= aspect;
-                } else {
-                    float aspect = iResolution.x / iResolution.y;
-                    uv.x *= aspect;
-                }
-                                
-                float a = iAngle;
-                float c = cos(a);
-                float s = sin(a);
-                mat2 mat = mat2(c,-s,s,c);
-                uv -= .5;
-                uv = mat * uv;
-                uv += .5;
+                float aspect = iResolution.x / iResolution.y;
+
+                uv.x *= aspect; 
+                uv = rotate(uv, iAngle, aspect);
                                                 
                 if (iDirection > 0)
                     uv = hatchyH(uv, iPeaks, iAmplitude);

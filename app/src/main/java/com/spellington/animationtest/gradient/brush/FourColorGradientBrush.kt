@@ -183,7 +183,7 @@ class FourColorGradientBrush(
     }
     
     fun setBottomRightColor(c: Color) {
-        shader.bottomRightColor
+        shader.bottomRightColor = c
     }
 
 }

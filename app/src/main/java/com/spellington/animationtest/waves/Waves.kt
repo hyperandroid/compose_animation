@@ -5,7 +5,6 @@ import android.graphics.RenderEffect
 import android.graphics.RuntimeShader
 import androidx.annotation.RequiresApi
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -23,37 +22,6 @@ val SHADER_SRC = """
     uniform shader contents;   // this will be the video frames
     uniform float2 iResolution; // width, height if you need it
     uniform float iTime;
-    
-    float3 background(float2 vUV) {
-    
-        float3 c1 = float3(float(0x29)/255., float(0x7f)/255., float(0xaf)/255.);
-        float3 c2 = float3(float(0x7d)/255., float(0xd8)/255., float(0xca)/255.);
-        float3 c3 = float3(float(0xfe)/255., float(0xe8)/255., float(0xc7)/255.);
-        float3 c4 = float3(float(0xfd)/255., float(0xdb)/255., float(0xba)/255.);
-				
-        float R1 = .4;
-        float R2 = .6;
-        float R3 = .75;
-        float R4 = 1.;
-				
-        float2 uv = vUV + float2(vUV.x, .03*sin(vUV.x*7.));	
-				    
-        float3 col = c4;
-        if (uv.y< R1) {
-            col = c1;
-        } else
-        if (uv.y < R2) {
-            col = mix( c1, c2, (uv.y-R1) / (R2-R1));
-        } else
-        if (uv.y < R3) {
-            col = mix( c2, c3, (uv.y-R2) / (R3-R2));
-        } else
-        if (uv.y < R4) {
-            col = mix( c3, c4, (uv.y-R3) / (R4-R3));
-        } 			    
-				    
-        return col;
-    }
     
 
     half4 main(float2 fragCoord) {

@@ -1,7 +1,6 @@
 package com.spellington.animationtest.gradient
 
 import android.graphics.Shader
-import androidx.annotation.DrawableRes
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -22,7 +21,6 @@ import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.spellington.animationtest.R
 import com.spellington.animationtest.gradient.brush.GradientColors
 import com.spellington.animationtest.gradient.brush.SpiralGradientBrush
 import com.spellington.animationtest.gradient.brush.SpiralGradientDirection
@@ -72,7 +70,6 @@ val SpiralGradientPresets = listOf(
 @Composable
 fun SpiralGradient(
     modifier: Modifier = Modifier,
-    @DrawableRes drawable:  Int = R.drawable.cheshire_cat,
     animate: Boolean = true,
     timeScale: Float = .5f,
     spiralThreshold: Float = 2f,
@@ -137,30 +134,13 @@ fun SpiralGradient(
                         }
                     }
             )
-
-            /*
-            val resources = LocalContext.current.resources
-            val imageBitmap = ImageBitmap.imageResource(resources, drawable)
-
-
-            Waves(
-                modifier = Modifier.align(Alignment.BottomCenter),
-                content = {
-                        Image(
-                            bitmap = imageBitmap,
-                            contentDescription = "Cheshire Cat",
-                            modifier = Modifier
-                                .fillMaxSize(0.5f)
-                        )
-                })
-             */
         }
     }
 }
 
 @Preview
 @Composable
-fun PreviewSpiralGradient() {
+fun PreviewSpiralGradientPresets() {
     Column(modifier = Modifier
         .fillMaxSize()
         .verticalScroll(rememberScrollState()), // Make it scrollable

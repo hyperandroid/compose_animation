@@ -142,7 +142,7 @@ fun FourColorGradient(
 
 @Preview
 @Composable
-fun FourColorGradient1() {
+fun FourColorGradientPresets() {
     Column(modifier = Modifier
         .fillMaxSize()
         .verticalScroll(rememberScrollState()), // Make it scrollable

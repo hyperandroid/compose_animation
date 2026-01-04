@@ -168,7 +168,7 @@ fun PolarGradient(
 
 @Preview
 @Composable
-fun PreviewPolarGradientGradient() {
+fun PreviewPolarGradientPresets() {
     Column(
         modifier = Modifier
             .fillMaxSize()

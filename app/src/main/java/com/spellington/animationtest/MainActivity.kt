@@ -4,7 +4,6 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
-import androidx.annotation.DrawableRes
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -46,6 +45,10 @@ import com.spellington.animationtest.gradient.FourColorGradient
 import com.spellington.animationtest.gradient.FourColorGradientPresets
 import com.spellington.animationtest.gradient.HatchGradient
 import com.spellington.animationtest.gradient.HatchGradientPresets
+import com.spellington.animationtest.gradient.PreviewHatchGradientPresets
+import com.spellington.animationtest.gradient.PreviewPolarGradientPresets
+import com.spellington.animationtest.gradient.PreviewSpiralGradientPresets
+import com.spellington.animationtest.gradient.PreviewWavyGradientPresets
 import com.spellington.animationtest.gradient.WavyGradient
 import com.spellington.animationtest.gradient.WavyGradientEffects
 import com.spellington.animationtest.ui.theme.AnimationtestTheme
@@ -193,11 +196,11 @@ class MainActivity : ComponentActivity() {
 @Composable
 fun ShowHatchGradients(modifier: Modifier = Modifier) {
 
-    var effectIndex by rememberSaveable {
+    var presetIndex by rememberSaveable {
         mutableIntStateOf(0)
     }
 
-    val currentEffect = HatchGradientPresets[effectIndex % HatchGradientPresets.size]
+    val preset = HatchGradientPresets[presetIndex % HatchGradientPresets.size]
 
     Box(
         modifier = modifier,
@@ -206,19 +209,19 @@ fun ShowHatchGradients(modifier: Modifier = Modifier) {
             modifier = Modifier
                 .fillMaxSize(),
             animate = true,
-            direction = currentEffect.direction,
-            timeScale = currentEffect.timeScale,
-            amplitude = currentEffect.amplitude,
-            peaks = currentEffect.peaks,
-            angle = currentEffect.angle,
+            direction = preset.direction,
+            timeScale = preset.timeScale,
+            amplitude = preset.amplitude,
+            peaks = preset.peaks,
+            angle = preset.angle,
 
-            bounds = currentEffect . bounds,
-            hardSampler = currentEffect.hardSampler,
-            tileMode = currentEffect.tileMode,
-            colors = currentEffect.colors,
+            bounds = preset . bounds,
+            hardSampler = preset.hardSampler,
+            tileMode = preset.tileMode,
+            colors = preset.colors,
 
             onClick = {
-                effectIndex += 1
+                presetIndex += 1
             }
         )
     }
@@ -227,11 +230,11 @@ fun ShowHatchGradients(modifier: Modifier = Modifier) {
 @Composable
 fun ShowWavyGradients(modifier: Modifier = Modifier) {
 
-    var effectIndex by rememberSaveable {
+    var presetIndex by rememberSaveable {
         mutableIntStateOf(0)
     }
 
-    val currentEffect = WavyGradientEffects[effectIndex % WavyGradientEffects.size]
+    val preset = WavyGradientEffects[presetIndex % WavyGradientEffects.size]
 
     Box(
         modifier = modifier,
@@ -240,19 +243,19 @@ fun ShowWavyGradients(modifier: Modifier = Modifier) {
             modifier = Modifier
                 .fillMaxSize(),
             animate = true,
-            direction = currentEffect.direction,
-            timeScale = currentEffect.timeScale,
-            amplitude = currentEffect.amplitude,
-            period = currentEffect.period,
-            angle = currentEffect.angle,
+            direction = preset.direction,
+            timeScale = preset.timeScale,
+            amplitude = preset.amplitude,
+            period = preset.period,
+            angle = preset.angle,
 
-            bounds = currentEffect.bounds,
-            hardSampler = currentEffect.hardSampler,
-            tileMode = currentEffect.tileMode,
-            colors = currentEffect.colors,
+            bounds = preset.bounds,
+            hardSampler = preset.hardSampler,
+            tileMode = preset.tileMode,
+            colors = preset.colors,
 
             onClick = {
-                effectIndex += 1
+                presetIndex += 1
             }
         )
     }
@@ -261,11 +264,11 @@ fun ShowWavyGradients(modifier: Modifier = Modifier) {
 @Composable
 fun ShowFourColorGradients(modifier: Modifier = Modifier) {
 
-    var effectIndex by rememberSaveable {
+    var presetIndex by rememberSaveable {
         mutableIntStateOf(0)
     }
 
-    val currentEffect = FourColorGradientPresets[effectIndex % FourColorGradientPresets.size]
+    val preset = FourColorGradientPresets[presetIndex % FourColorGradientPresets.size]
 
     Box(
         modifier = modifier,
@@ -273,12 +276,12 @@ fun ShowFourColorGradients(modifier: Modifier = Modifier) {
         FourColorGradient(
             modifier = Modifier
                 .fillMaxSize(),
-            topLeft = currentEffect.topLeft,
-            topRight = currentEffect.topRight,
-            bottomLeft = currentEffect.bottomLeft,
-            bottomRight = currentEffect.bottomRight,
+            topLeft = preset.topLeft,
+            topRight = preset.topRight,
+            bottomLeft = preset.bottomLeft,
+            bottomRight = preset.bottomRight,
             onClick = {
-                effectIndex += 1
+                presetIndex += 1
             }
         )
     }
@@ -287,28 +290,28 @@ fun ShowFourColorGradients(modifier: Modifier = Modifier) {
 @Composable
 fun ShowFlowerGradient(modifier: Modifier = Modifier) {
 
-    var effectIndex by rememberSaveable {
+    var presetIndex by rememberSaveable {
         mutableIntStateOf(0)
     }
 
-    val currentEffect = PolarGradientPresets[effectIndex % PolarGradientPresets.size]
+    val preset = PolarGradientPresets[presetIndex % PolarGradientPresets.size]
 
 
     PolarGradient(
         modifier = modifier,
-        rotationTimeScale = currentEffect.rotationTimeScale,
-        inOutTimeScale = currentEffect.inOutTimeScale,
-        petals = currentEffect.petals,
-        direction = currentEffect.direction,
-        rotationDirection = currentEffect.rotationDirection,
-        center = currentEffect.center,
-        petalInfluence = currentEffect.petalInfluence,
-        wobblyFactor = currentEffect.wobblyFactor,
-        colors = currentEffect.colors,
-        tileMode = currentEffect.tileMode,
-        hardSampler = currentEffect.hardSampler,
+        rotationTimeScale = preset.rotationTimeScale,
+        inOutTimeScale = preset.inOutTimeScale,
+        petals = preset.petals,
+        direction = preset.direction,
+        rotationDirection = preset.rotationDirection,
+        center = preset.center,
+        petalInfluence = preset.petalInfluence,
+        wobblyFactor = preset.wobblyFactor,
+        colors = preset.colors,
+        tileMode = preset.tileMode,
+        hardSampler = preset.hardSampler,
         onClick = {
-            effectIndex += 1
+            presetIndex += 1
         }
     )
 }
@@ -316,7 +319,6 @@ fun ShowFlowerGradient(modifier: Modifier = Modifier) {
 @Composable
 fun ShowSpiralGradienSettings(
     modifier: Modifier = Modifier,
-    @DrawableRes drawable: Int = R.drawable.cheshire_cat,
 ) {
 
     var effectIndex by rememberSaveable {
@@ -327,7 +329,6 @@ fun ShowSpiralGradienSettings(
 
     SpiralGradient(
         modifier = modifier.fillMaxSize(),
-        drawable = drawable,
         timeScale = currentEffect.timeScale,
         spiralThreshold = currentEffect.spiralThreshold,
         direction = currentEffect.direction,
@@ -346,143 +347,29 @@ fun ShowSpiralGradienSettings(
 @Preview
 @Composable
 fun PreviewPolarGradientGradient() {
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .verticalScroll(rememberScrollState()), // Make it scrollable
-        verticalArrangement = Arrangement.spacedBy(16.dp)
-    ) {
-        PolarGradientPresets.forEach { currentEffect ->
-            PolarGradient(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(200.dp)
-                    .width(300.dp),
-                animate = true,
-                rotationTimeScale = currentEffect.rotationTimeScale,
-                inOutTimeScale = currentEffect.inOutTimeScale,
-                petals = currentEffect.petals,
-                direction = currentEffect.direction,
-                rotationDirection = currentEffect.rotationDirection,
-                center = currentEffect.center,
-                petalInfluence = currentEffect.petalInfluence,
-                wobblyFactor = currentEffect.wobblyFactor,
-
-                colors = currentEffect.colors,
-                tileMode = currentEffect.tileMode,
-                hardSampler = currentEffect.hardSampler,
-            )
-        }
-    }
+    PreviewPolarGradientPresets()
 }
 
 @Preview
 @Composable
 fun PreviewSpiralGradient() {
-    Column(modifier = Modifier
-        .fillMaxSize()
-        .verticalScroll(rememberScrollState()), // Make it scrollable
-        verticalArrangement = Arrangement.spacedBy(16.dp)
-    ) {
-        SpiralGradientPresets.forEach { currentEffect ->
-            SpiralGradient(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(200.dp)
-                    .width(300.dp),
-                timeScale = currentEffect.timeScale,
-                spiralThreshold = currentEffect.spiralThreshold,
-                direction = currentEffect.direction,
-                colors = currentEffect.colors,
-                center = currentEffect.center,
-                hardSampler = currentEffect.hardSampler,
-                tileMode = currentEffect.tileMode,
-                onClick = {}
-            )
-        }
-    }
+    PreviewSpiralGradientPresets()
 }
 @Preview
 @Composable
 fun PreviewWavyGradient() {
-    Column(modifier = Modifier
-        .fillMaxSize()
-        .verticalScroll(rememberScrollState()), // Make it scrollable
-        verticalArrangement = Arrangement.spacedBy(16.dp)
-    ) {
-        WavyGradientEffects.forEach { currentEffect ->
-            WavyGradient(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .width(300.dp)
-                    .height(200.dp),
-                timeScale = currentEffect.timeScale,
-                direction = currentEffect.direction,
-                amplitude = currentEffect.amplitude,
-                period = currentEffect.period,
-                angle = currentEffect.angle,
-
-                hardSampler = currentEffect.hardSampler,
-                bounds = currentEffect.bounds,
-                colors = currentEffect.colors,
-                tileMode = currentEffect.tileMode,
-            )
-        }
-    }
+    PreviewWavyGradientPresets()
 }
 
 @Preview
 @Composable
 fun PreviewHatchGradients() {
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .verticalScroll(rememberScrollState()), // Make it scrollable
-        verticalArrangement = Arrangement
-            .spacedBy(16.dp)
-    ) {
-        HatchGradientPresets.forEach { currentEffect ->
-            HatchGradient(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .width(300.dp)
-                    .height(200.dp),
-                timeScale = currentEffect.timeScale,
-                direction = currentEffect.direction,
-                amplitude = currentEffect.amplitude,
-                peaks = currentEffect.peaks,
-                angle = currentEffect.angle,
-
-                hardSampler = currentEffect.hardSampler,
-                bounds = currentEffect.bounds,
-                colors = currentEffect.colors,
-                tileMode = currentEffect.tileMode,
-            )
-        }
-    }
+    PreviewHatchGradientPresets()
 }
 
 @Preview
 @Composable
 fun FourColorGradient1() {
-    Column(modifier = Modifier
-        .fillMaxSize()
-        .verticalScroll(rememberScrollState()), // Make it scrollable
-        verticalArrangement = Arrangement.spacedBy(8.dp)
-    ) {
-
-        FourColorGradientPresets.forEach { effect ->
-            FourColorGradient(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .width(300.dp)
-                    .height(100.dp),
-                topLeft = effect.topLeft,
-                topRight = effect.topRight,
-                bottomLeft = effect.bottomLeft,
-                bottomRight = effect.bottomRight,
-            )
-        }
-    }
+    FourColorGradientPresets()
 }
 
