@@ -1,12 +1,10 @@
 package com.spellington.animationtest.gradient.brush
 
-import android.graphics.LinearGradient
 import android.graphics.RuntimeShader
 import android.graphics.Shader
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.ShaderBrush
-import androidx.compose.ui.graphics.toArgb
 
 
 class FlowerShader() {
@@ -142,7 +140,7 @@ class FlowerShader() {
     uniform float iDirection;           // in/out
     uniform float iWobblyFactor;
     
-    float2 flower(float2 uv, float spiral, float rotationTime, float inOutTime) {
+    float2 polar(float2 uv, float spiral, float rotationTime, float inOutTime) {
         uv = 2*(uv-iCenter);
         
         if (iResolution.x < iResolution.y) {
@@ -166,7 +164,7 @@ class FlowerShader() {
     half4 main(float2 fragCoord) {	    
         float2 uv = fragCoord / iResolution;
         
-        uv = flower(
+        uv = polar(
             uv, 
             iFlowerPetals, 
             iTime*iRotationTimeScale*iRotationDirection,
@@ -190,7 +188,7 @@ enum class RotationDirection {
     fun toFloat() = if (this == Clockwise) -1f else 1f
 }
 
-class FlowerGradientBrush(
+class PolarGradientBrush(
     sampler: Shader,
     flowerPetals: Float = 5f,
     rotationTimeScale: Float = .1f,

@@ -21,7 +21,7 @@ import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.spellington.animationtest.gradient.brush.FlowerGradientBrush
+import com.spellington.animationtest.gradient.brush.PolarGradientBrush
 import com.spellington.animationtest.gradient.brush.GradientColors
 import com.spellington.animationtest.gradient.brush.RotationDirection
 import com.spellington.animationtest.gradient.brush.SpiralGradientDirection
@@ -30,7 +30,7 @@ import com.spellington.animationtest.util.PausableAnimatedTime
 import com.spellington.animationtest.util.SamplerFactory
 import com.spellington.animationtest.util.samplePalettes
 
-data class FlowerEffect(
+data class PolarGradientPreset(
     val rotationTimeScale: Float = .5f,
     val inOutTimeScale: Float = .1f,
     val petals: Float = 5f,
@@ -45,14 +45,14 @@ data class FlowerEffect(
     val tileMode: Shader.TileMode = Shader.TileMode.MIRROR,
 )
 
-val FlowerEffects = listOf(
-    FlowerEffect(
+val PolarGradientPresets = listOf(
+    PolarGradientPreset(
         colors = samplePalettes[2],
         rotationDirection = RotationDirection.Clockwise,
         inOutTimeScale = .1f,
         rotationTimeScale = .3f,
     ),
-    FlowerEffect(
+    PolarGradientPreset(
         petals = 13f,
         rotationTimeScale = .1f,
         petalInfluence = .35f,
@@ -61,14 +61,14 @@ val FlowerEffects = listOf(
         inOutTimeScale = .5f,
         hardSampler = true,
     ),
-    FlowerEffect(
+    PolarGradientPreset(
         petals = 7f,
         rotationTimeScale = .1f,
         petalInfluence = .35f,
         colors = samplePalettes[1],
         center = Offset(.25f, .25f),
     ),
-    FlowerEffect(
+    PolarGradientPreset(
         petals = 3f,
         rotationTimeScale = .1f,
         petalInfluence = 1f,
@@ -76,7 +76,7 @@ val FlowerEffects = listOf(
         wobblyFactor = 1f,
         inOutTimeScale = .5f,
     ),
-    FlowerEffect(
+    PolarGradientPreset(
         petals = 5f,
         rotationTimeScale = .1f,
         petalInfluence = .3f,
@@ -90,7 +90,7 @@ val FlowerEffects = listOf(
 )
 
 @Composable
-fun FlowerGradient(
+fun PolarGradient(
     modifier: Modifier = Modifier,
     animate: Boolean = true,
     rotationTimeScale: Float = .5f,
@@ -121,7 +121,7 @@ fun FlowerGradient(
 
     val brush by remember {
         mutableStateOf(
-            FlowerGradientBrush(
+            PolarGradientBrush(
                 sampler = sampler.sampler,
                 rotationTimeScale = rotationTimeScale,
                 inOutTimeScale = inOutTimeScale,
@@ -167,15 +167,15 @@ fun FlowerGradient(
 
 @Preview
 @Composable
-fun PreviewFlowerGradientGradient() {
+fun PreviewPolarGradientGradient() {
     Column(
         modifier = Modifier
             .fillMaxSize()
             .verticalScroll(rememberScrollState()), // Make it scrollable
         verticalArrangement = Arrangement.spacedBy(4.dp)
     ) {
-        FlowerEffects.forEach { currentEffect ->
-            FlowerGradient(
+        PolarGradientPresets.forEach { currentEffect ->
+            PolarGradient(
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(200.dp)

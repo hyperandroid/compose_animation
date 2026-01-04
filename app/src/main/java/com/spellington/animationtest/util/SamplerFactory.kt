@@ -27,7 +27,7 @@ object SamplerFactory {
 
     fun createSampler(
         orientation: GradientSamplerOrientation,
-        bounds: Pair<Float, Float> = 0f to 1f,
+        bounds: GradientDomain = 0f to 1f,
         colors: GradientColors,
         tileMode: Shader.TileMode,
         hardColorTransition: Boolean = false,
@@ -44,7 +44,7 @@ object SamplerFactory {
     }
 
     fun createHorizontalSampler(
-        bounds: Pair<Float, Float>,
+        bounds: GradientDomain,
         colors: GradientColors,
         tileMode: Shader.TileMode,
         hardColorTransition: Boolean,
@@ -56,7 +56,7 @@ object SamplerFactory {
     }
 
     fun createVerticalSampler(
-        bounds: Pair<Float, Float>,
+        bounds: GradientDomain,
         colors: GradientColors,
         tileMode: Shader.TileMode,
         hardColorTransition: Boolean,

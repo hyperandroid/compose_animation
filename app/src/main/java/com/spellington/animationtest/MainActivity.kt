@@ -39,13 +39,13 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.spellington.animationtest.gradient.SpiralGradient
-import com.spellington.animationtest.gradient.ChesireCatEffects
-import com.spellington.animationtest.gradient.FlowerGradient
-import com.spellington.animationtest.gradient.FlowerEffects
+import com.spellington.animationtest.gradient.SpiralGradientPresets
+import com.spellington.animationtest.gradient.PolarGradient
+import com.spellington.animationtest.gradient.PolarGradientPresets
 import com.spellington.animationtest.gradient.FourColorGradient
-import com.spellington.animationtest.gradient.FourColorGradientEffects
+import com.spellington.animationtest.gradient.FourColorGradientPresets
 import com.spellington.animationtest.gradient.HatchGradient
-import com.spellington.animationtest.gradient.HatchGradientEffects
+import com.spellington.animationtest.gradient.HatchGradientPresets
 import com.spellington.animationtest.gradient.WavyGradient
 import com.spellington.animationtest.gradient.WavyGradientEffects
 import com.spellington.animationtest.ui.theme.AnimationtestTheme
@@ -197,7 +197,7 @@ fun ShowHatchGradients(modifier: Modifier = Modifier) {
         mutableIntStateOf(0)
     }
 
-    val currentEffect = HatchGradientEffects[effectIndex % HatchGradientEffects.size]
+    val currentEffect = HatchGradientPresets[effectIndex % HatchGradientPresets.size]
 
     Box(
         modifier = modifier,
@@ -265,7 +265,7 @@ fun ShowFourColorGradients(modifier: Modifier = Modifier) {
         mutableIntStateOf(0)
     }
 
-    val currentEffect = FourColorGradientEffects[effectIndex % FourColorGradientEffects.size]
+    val currentEffect = FourColorGradientPresets[effectIndex % FourColorGradientPresets.size]
 
     Box(
         modifier = modifier,
@@ -291,10 +291,10 @@ fun ShowFlowerGradient(modifier: Modifier = Modifier) {
         mutableIntStateOf(0)
     }
 
-    val currentEffect = FlowerEffects[effectIndex % FlowerEffects.size]
+    val currentEffect = PolarGradientPresets[effectIndex % PolarGradientPresets.size]
 
 
-    FlowerGradient(
+    PolarGradient(
         modifier = modifier,
         rotationTimeScale = currentEffect.rotationTimeScale,
         inOutTimeScale = currentEffect.inOutTimeScale,
@@ -323,7 +323,7 @@ fun ShowCheshireCat(
         mutableIntStateOf(0)
     }
 
-    val currentEffect = ChesireCatEffects[effectIndex % ChesireCatEffects.size]
+    val currentEffect = SpiralGradientPresets[effectIndex % SpiralGradientPresets.size]
 
     SpiralGradient(
         modifier = modifier.fillMaxSize(),
@@ -345,15 +345,15 @@ fun ShowCheshireCat(
 
 @Preview
 @Composable
-fun PreviewFlowerGradientGradient() {
+fun PreviewPolarGradientGradient() {
     Column(
         modifier = Modifier
             .fillMaxSize()
             .verticalScroll(rememberScrollState()), // Make it scrollable
         verticalArrangement = Arrangement.spacedBy(16.dp)
     ) {
-        FlowerEffects.forEach { currentEffect ->
-            FlowerGradient(
+        PolarGradientPresets.forEach { currentEffect ->
+            PolarGradient(
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(200.dp)
@@ -384,7 +384,7 @@ fun PreviewSpiralGradient() {
         .verticalScroll(rememberScrollState()), // Make it scrollable
         verticalArrangement = Arrangement.spacedBy(16.dp)
     ) {
-        ChesireCatEffects.forEach { currentEffect ->
+        SpiralGradientPresets.forEach { currentEffect ->
             SpiralGradient(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -441,7 +441,7 @@ fun PreviewHatchGradients() {
         verticalArrangement = Arrangement
             .spacedBy(16.dp)
     ) {
-        HatchGradientEffects.forEach { currentEffect ->
+        HatchGradientPresets.forEach { currentEffect ->
             HatchGradient(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -471,7 +471,7 @@ fun FourColorGradient1() {
         verticalArrangement = Arrangement.spacedBy(8.dp)
     ) {
 
-        FourColorGradientEffects.forEach { effect ->
+        FourColorGradientPresets.forEach { effect ->
             FourColorGradient(
                 modifier = Modifier
                     .fillMaxWidth()

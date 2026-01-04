@@ -2,7 +2,6 @@ package com.spellington.animationtest.gradient
 
 import android.graphics.Shader
 import androidx.annotation.DrawableRes
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -17,14 +16,10 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.drawWithCache
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.ImageBitmap
-import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.imageResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.spellington.animationtest.R
@@ -35,10 +30,9 @@ import com.spellington.animationtest.util.GradientSamplerOrientation
 import com.spellington.animationtest.util.PausableAnimatedTime
 import com.spellington.animationtest.util.SamplerFactory
 import com.spellington.animationtest.util.samplePalettes
-import com.spellington.animationtest.waves.Waves
 
 
-data class CheshireCatEffect(
+data class SpiralGradientPreset(
     val timeScale: Float = .5f,
     val spiralThreshold: Float = 2f,
     val direction: SpiralGradientDirection = SpiralGradientDirection.Out,
@@ -49,24 +43,24 @@ data class CheshireCatEffect(
     val tileMode: Shader.TileMode = Shader.TileMode.MIRROR,
 )
 
-val ChesireCatEffects = listOf(
-    CheshireCatEffect(
+val SpiralGradientPresets = listOf(
+    SpiralGradientPreset(
         spiralThreshold = 4f,
         hardSampler = true,
     ),
-    CheshireCatEffect(
+    SpiralGradientPreset(
         timeScale = .1f,
         spiralThreshold = 1f,
         colors = samplePalettes[1],
         direction = SpiralGradientDirection.In,
     ),
-    CheshireCatEffect(
+    SpiralGradientPreset(
         center = Offset(.25f, .25f),
         spiralThreshold = 4f,
         colors = samplePalettes[5],
         hardSampler = true,
     ),
-    CheshireCatEffect(
+    SpiralGradientPreset(
         timeScale = .1f,
         spiralThreshold = 2f,
         colors = samplePalettes[4],
@@ -144,6 +138,7 @@ fun SpiralGradient(
                     }
             )
 
+            /*
             val resources = LocalContext.current.resources
             val imageBitmap = ImageBitmap.imageResource(resources, drawable)
 
@@ -158,6 +153,7 @@ fun SpiralGradient(
                                 .fillMaxSize(0.5f)
                         )
                 })
+             */
         }
     }
 }
@@ -170,7 +166,7 @@ fun PreviewSpiralGradient() {
         .verticalScroll(rememberScrollState()), // Make it scrollable
         verticalArrangement = Arrangement.spacedBy(16.dp)
     ) {
-        ChesireCatEffects.forEach { currentEffect ->
+        SpiralGradientPresets.forEach { currentEffect ->
             SpiralGradient(
                 modifier = Modifier
                     .fillMaxWidth()

@@ -11,3 +11,8 @@ This modifier can be applied to any composable, as seen in the capture:
 
 ![Marquee animation](./docs/marquee/marquee.gif)
 
+## Gradients
+
+Leverage LinearGradient to build new types of gradients by warping the space in a custom shader.
+
+![Gradients](./docs/gradients.png)

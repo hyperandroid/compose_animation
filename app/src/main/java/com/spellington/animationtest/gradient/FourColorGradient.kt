@@ -24,16 +24,16 @@ import androidx.compose.ui.unit.dp
 import com.spellington.animationtest.gradient.brush.FourColorGradientBrush
 import com.spellington.animationtest.util.PausableAnimatedTime
 
-data class FourColorGradientEffect(
+data class FourColorGradientPreset(
     val topLeft: Color,
     val topRight: Color,
     val bottomLeft: Color,
     val bottomRight: Color,
 )
 
-val FourColorGradientEffects = listOf(
+val FourColorGradientPresets = listOf(
 // 2) Sunset Heat
-    FourColorGradientEffect(
+    FourColorGradientPreset(
         topRight =  Color(0xFFFFB703),
         topLeft =   Color(0xFFFB5607),
         bottomRight = Color(0xFFFF006E),
@@ -41,7 +41,7 @@ val FourColorGradientEffects = listOf(
     ),
 
 // 3) Deep Ocean
-    FourColorGradientEffect(
+    FourColorGradientPreset(
         topRight =  Color(0xFF2EC4B6),
         topLeft =   Color(0xFF0B132B),
         bottomRight = Color(0xFF1C2541),
@@ -49,7 +49,7 @@ val FourColorGradientEffects = listOf(
     ),
 
 // 4) Cotton Candy
-    FourColorGradientEffect(
+    FourColorGradientPreset(
         topRight =  Color(0xFFB8F2E6),
         topLeft =   Color(0xFFAED9E0),
         bottomRight = Color(0xFFFFA6C1),
@@ -57,7 +57,7 @@ val FourColorGradientEffects = listOf(
     ),
 
 // 5) Forest + Gold
-    FourColorGradientEffect(
+    FourColorGradientPreset(
         topRight =  Color(0xFFF2C14E),
         topLeft =   Color(0xFF0B3D2E),
         bottomRight = Color(0xFF2D6A4F),
@@ -65,7 +65,7 @@ val FourColorGradientEffects = listOf(
     ),
 
 // 6) Cyberpunk Night
-    FourColorGradientEffect(
+    FourColorGradientPreset(
         topRight =  Color(0xFF00F5D4),
         topLeft =   Color(0xFF0B0F2B),
         bottomRight = Color(0xFFF15BB5),
@@ -73,7 +73,7 @@ val FourColorGradientEffects = listOf(
     ),
 
 // 7) Desert Sky
-    FourColorGradientEffect(
+    FourColorGradientPreset(
         topRight =  Color(0xFF90E0EF),
         topLeft =   Color(0xFFFFDDD2),
         bottomRight = Color(0xFF3A86FF),
@@ -81,7 +81,7 @@ val FourColorGradientEffects = listOf(
     ),
 
 // 8) Monochrome + Accent
-    FourColorGradientEffect(
+    FourColorGradientPreset(
         topRight =  Color(0xFFFFFFFF),
         topLeft =   Color(0xFF111827),
         bottomRight = Color(0xFF60A5FA),
@@ -149,7 +149,7 @@ fun FourColorGradient1() {
         verticalArrangement = Arrangement.spacedBy(8.dp)
     ) {
 
-        FourColorGradientEffects.forEach { effect ->
+        FourColorGradientPresets.forEach { effect ->
             FourColorGradient(
                 modifier = Modifier
                     .fillMaxWidth()

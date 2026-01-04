@@ -5,29 +5,21 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.drawWithCache
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.Shadow
-import androidx.compose.ui.text.TextStyle
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import com.spellington.animationtest.gradient.brush.GradientColors
 import com.spellington.animationtest.gradient.brush.HatchGradientBrush
 import com.spellington.animationtest.util.GradientDomain
@@ -35,9 +27,8 @@ import com.spellington.animationtest.util.GradientSamplerOrientation
 import com.spellington.animationtest.util.PausableAnimatedTime
 import com.spellington.animationtest.util.SamplerFactory
 import com.spellington.animationtest.util.samplePalettes
-import com.spellington.animationtest.waves.Waves
 
-data class HatchGradientEffect(
+data class HatchGradientPreset(
     val timeScale: Float = .5f,
     val direction: GradientSamplerOrientation = GradientSamplerOrientation.Horizontal,
     val amplitude: Float = .1f,
@@ -50,8 +41,8 @@ data class HatchGradientEffect(
     val hardSampler: Boolean = false,
 )
 
-val HatchGradientEffects = listOf(
-    HatchGradientEffect(
+val HatchGradientPresets = listOf(
+    HatchGradientPreset(
         colors= samplePalettes[1],
         amplitude = .5f,
         peaks = 5f,
@@ -59,7 +50,7 @@ val HatchGradientEffects = listOf(
         direction = GradientSamplerOrientation.Horizontal,
         hardSampler = true,
     ),
-    HatchGradientEffect(
+    HatchGradientPreset(
         colors= samplePalettes[2],
         amplitude = .3f,
         peaks = 3f,
@@ -69,14 +60,14 @@ val HatchGradientEffects = listOf(
         bounds = .45f to .75f,
         hardSampler = true,
     ),
-    HatchGradientEffect(
+    HatchGradientPreset(
         colors= samplePalettes[4],
         direction = GradientSamplerOrientation.Vertical,
         amplitude = 1f,
         tileMode = Shader.TileMode.MIRROR,
         angle =-(Math.PI * .1).toFloat(),
     ),
-    HatchGradientEffect(
+    HatchGradientPreset(
         colors= samplePalettes[3],
         direction = GradientSamplerOrientation.Vertical,
         amplitude = .2f,
@@ -167,7 +158,7 @@ fun PreviewHatchGradients() {
         verticalArrangement = Arrangement
             .spacedBy(16.dp)
     ) {
-        HatchGradientEffects.forEach { currentEffect ->
+        HatchGradientPresets.forEach { currentEffect ->
             HatchGradient(
                 modifier = Modifier
                     .fillMaxWidth()
