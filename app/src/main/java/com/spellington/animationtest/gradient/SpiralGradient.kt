@@ -175,9 +175,11 @@ fun PreviewSpiralGradient() {
                 timeScale = currentEffect.timeScale,
                 spiralThreshold = currentEffect.spiralThreshold,
                 direction = currentEffect.direction,
+                center = currentEffect.center,
+
                 hardSampler = currentEffect.hardSampler,
                 colors = currentEffect.colors,
-                center = currentEffect.center,
+                tileMode = currentEffect.tileMode,
                 onClick = {}
             )
         }

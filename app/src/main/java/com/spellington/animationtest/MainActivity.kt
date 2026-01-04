@@ -175,7 +175,7 @@ class MainActivity : ComponentActivity() {
 
                             when (selectedAnimation) {
                                 AnimationDemos.Marquee -> {}
-                                AnimationDemos.SpiralGradient -> ShowCheshireCat()
+                                AnimationDemos.SpiralGradient -> ShowSpiralGradienSettings()
                                 AnimationDemos.FlowerGradient -> ShowFlowerGradient()
                                 AnimationDemos.Vacation -> VacationTime()
                                 AnimationDemos.FourColorGradient -> ShowFourColorGradients()
@@ -314,7 +314,7 @@ fun ShowFlowerGradient(modifier: Modifier = Modifier) {
 }
 
 @Composable
-fun ShowCheshireCat(
+fun ShowSpiralGradienSettings(
     modifier: Modifier = Modifier,
     @DrawableRes drawable: Int = R.drawable.cheshire_cat,
 ) {
@@ -485,3 +485,4 @@ fun FourColorGradient1() {
         }
     }
 }
+

@@ -121,12 +121,13 @@ class WavyGradientShader() {
             half4 main(float2 fragCoord) {
                 float2 uv = fragCoord.xy/iResolution.xy;
                 
-                // Correct aspect ratio
+                // Correct aspect ratio. keep y axis 0..1, 
+                // but stretch X according to the aspect ratio
                 float aspect;
-
                 aspect = iResolution.x / iResolution.y;
                 uv.x *= aspect;
                 
+                // rotate uv around the center of the composable
                 float a = iAngle;
                 float c = cos(a);
                 float s = sin(a);

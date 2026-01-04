@@ -165,6 +165,7 @@ fun PolarGradient(
     }
 }
 
+
 @Preview
 @Composable
 fun PreviewPolarGradientGradient() {
@@ -189,6 +190,7 @@ fun PreviewPolarGradientGradient() {
                 center = currentEffect.center,
                 petalInfluence = currentEffect.petalInfluence,
                 wobblyFactor = currentEffect.wobblyFactor,
+
                 hardSampler = currentEffect.hardSampler,
                 colors = currentEffect.colors,
                 tileMode = currentEffect.tileMode,
